@@ -3,6 +3,10 @@
     package="edu.westmont.course"
     android:versionCode="1"
     android:versionName="1.0" >
+    
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -21,6 +25,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <!-- CREDIT TO http://www.vogella.com/articles/AndroidLocationAPI/article.html#tutlocationapi for some of this activity code -->
+        <activity
+            android:name = "edu.westmont.course.ShowLocationActivity"
+            android:label="@string/title_activity_show_location"
+            android:parentActivityName = "edu.westmont.course.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.westmont.course.MainActivity" />
         </activity>
     </application>
 
