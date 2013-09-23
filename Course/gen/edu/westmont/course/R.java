@@ -187,15 +187,16 @@ containing a value of this type.
         public static final int ic_plusone_tall_off_client=0x7f02001d;
     }
     public static final class id {
-        public static final int TextView01=0x7f050007;
-        public static final int TextView02=0x7f050008;
-        public static final int TextView03=0x7f05000a;
-        public static final int TextView04=0x7f05000b;
-        public static final int action_home=0x7f05000d;
-        public static final int action_settings=0x7f05000c;
+        public static final int TextView01=0x7f050008;
+        public static final int TextView02=0x7f050009;
+        public static final int TextView03=0x7f05000b;
+        public static final int TextView04=0x7f05000c;
+        public static final int action_home=0x7f05000e;
+        public static final int action_settings=0x7f05000d;
         public static final int hybrid=0x7f050004;
-        public static final int linearLayout1=0x7f050006;
-        public static final int linearLayout2=0x7f050009;
+        public static final int linearLayout1=0x7f050007;
+        public static final int linearLayout2=0x7f05000a;
+        public static final int map=0x7f050006;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int satellite=0x7f050002;
@@ -204,7 +205,8 @@ containing a value of this type.
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int activity_show_location=0x7f030001;
+        public static final int activity_map=0x7f030001;
+        public static final int activity_show_location=0x7f030002;
     }
     public static final class menu {
         public static final int main=0x7f090000;
@@ -305,6 +307,7 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060012;
+        public static final int google_play_error_message=0x7f06001f;
         public static final int hello_world=0x7f06001b;
         public static final int title_activity_show_location=0x7f06001d;
     }
