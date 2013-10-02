@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- Credit to lynda.com, Building Android Apps with Google Maps API v2 -->
+    
+    <item 
+        android:id="@+id/showCurrentLocation"
+        android:title="@string/current_location"
+        android:showAsAction="ifRoom"/>
+    
+    <item 
+        android:id="@+id/mapTypeNormal"
+        android:title="@string/menu_normal"/>
+    
+    <item 
+        android:id="@+id/mapTypeSatellite"
+        android:title="@string/menu_satellite"/>
+    
+    <item 
+        android:id="@+id/mapTypeTerrain"
+        android:title="@string/menu_terrain"/>
+
+    <item 
+        android:id="@+id/mapTypeHybrid"
+        android:title="@string/menu_hybrid"/>
+</menu>

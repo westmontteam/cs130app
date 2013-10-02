@@ -1,7 +1,11 @@
 package edu.westmont.course;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -10,6 +14,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 //
 
+import android.location.Location;
 import android.os.Bundle;
 import android.app.Dialog;
 import android.content.Intent;
@@ -20,10 +25,12 @@ import android.view.View;
 import android.widget.Toast;
 
 
-public class MainActivity extends FragmentActivity {
-
+public class MainActivity extends FragmentActivity implements 
+GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	private static final int GPS_ERRORDIALOG_REQUEST = 0;
 	GoogleMap myMap;
+	LocationClient myLocationClient;
+	int defaultZoom = 5;
 
 	/**
 	 * Initiates an instance of the class and if the mapping service is available
@@ -37,7 +44,10 @@ public class MainActivity extends FragmentActivity {
 			setContentView(R.layout.activity_map);
 			if (initMap()){
 				Toast.makeText(this, "Ready to map! This is a test.", Toast.LENGTH_SHORT).show();
-				gotoLocation(34.44914,-119.661673,15);
+				myLocationClient = new LocationClient(this, this, this);
+				myLocationClient.connect();
+				//gotoLocation(34.44914,-119.661673,15);
+				//myMap.setMyLocationEnabled(true);
 			}
 			else Toast.makeText(this, "The map in not available right now.", Toast.LENGTH_SHORT).show();
 
@@ -49,9 +59,35 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.map_menu, menu);
 		return true;
 	}
+
+	/**
+	 * Credit for this method belongs to lynda.com, "Building Android Apps with Google Maps API v2"
+	 */
+	@Override
+	public boolean onOptionsItemSelected(android.view.MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.showCurrentLocation:
+			gotoCurrentLocation();
+		case R.id.mapTypeNormal:
+			myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+			break;
+		case R.id.mapTypeSatellite:
+			myMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+			break;
+		case R.id.mapTypeHybrid:
+			myMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+			break;
+		case R.id.mapTypeTerrain:
+			myMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	};
 
 	public void findCoordinates(View view){
 		// Do something in response to button
@@ -88,11 +124,59 @@ public class MainActivity extends FragmentActivity {
 		}
 		return (myMap != null);
 	}
-	
+
 	public void gotoLocation(double lat, double lng, float zoom){
 		LatLng ll = new LatLng(lat,lng);
 		CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll,zoom);
 		myMap.moveCamera(update);
 	}
+
+	protected void gotoCurrentLocation(){
+		Location location = myLocationClient.getLastLocation();
+		if (location == null){
+			Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
+		}
+		else {
+			LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+			CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
+			myMap.animateCamera(cu);
+			//Display current altitude
+			//Double d = location.getAltitude();
+			//Toast.makeText(this, "Alt: " + d.toString(), Toast.LENGTH_LONG).show();
+		}
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void onConnected(Bundle arg0) {
+		Toast.makeText(this, "Connected to Location Services", Toast.LENGTH_LONG).show();
+		gotoCurrentLocation();
+		LocationRequest request = LocationRequest.create();
+		request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		request.setInterval(5000);
+		request.setFastestInterval(1000);
+		myLocationClient.requestLocationUpdates(request, this);
+	}
+
+	@Override
+	public void onDisconnected() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onLocationChanged(Location loc) {
+		String str = loc.getLatitude() + "," + loc.getLongitude() + ",ALT: " + loc.getAltitude();
+		Toast.makeText(this,str,Toast.LENGTH_SHORT).show();	
+
+	}
+
+
 
 }
