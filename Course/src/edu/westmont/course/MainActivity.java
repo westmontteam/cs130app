@@ -31,6 +31,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	GoogleMap myMap;
 	LocationClient myLocationClient;
 	int defaultZoom = 5;
+	LocationChanger lc = new LocationChanger(50,55);
 
 	/**
 	 * Initiates an instance of the class and if the mapping service is available
@@ -131,6 +132,11 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		myMap.moveCamera(update);
 	}
 
+	public void gotoLatLng(LatLng ll, float zoom){
+		CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll,zoom);
+		myMap.moveCamera(update);
+	}
+
 	protected void gotoCurrentLocation(){
 		Location location = myLocationClient.getLastLocation();
 		if (location == null){
@@ -155,7 +161,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		Toast.makeText(this, "Connected to Location Services", Toast.LENGTH_LONG).show();
+		//Toast.makeText(this, "Connected to Location Services", Toast.LENGTH_LONG).show();
 		gotoCurrentLocation();
 		LocationRequest request = LocationRequest.create();
 		request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -172,9 +178,9 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onLocationChanged(Location loc) {
-		String str = loc.getLatitude() + "," + loc.getLongitude() + ",ALT: " + loc.getAltitude();
-		Toast.makeText(this,str,Toast.LENGTH_SHORT).show();	
-
+		LatLng ll = lc.next();
+		Toast.makeText(this,ll.toString(),Toast.LENGTH_SHORT).show();	
+		gotoLatLng(ll,5);
 	}
 
 
