@@ -1,5 +1,7 @@
 package edu.westmont.course;
 
+import java.util.LinkedList;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -12,12 +14,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 //import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 //
 
 import android.location.Location;
 import android.os.Bundle;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 //import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -32,7 +37,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	LocationClient myLocationClient;
 	int defaultZoom = 5;
 	LocationChanger lc = new LocationChanger(50,55);
-
+	LinkedList<LatLng> listLatLng = new LinkedList<LatLng>();
+	
 	/**
 	 * Initiates an instance of the class and if the mapping service is available
 	 * it changes the view to the map view.  Otherwise it displays the main activity view.
@@ -165,8 +171,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		gotoCurrentLocation();
 		LocationRequest request = LocationRequest.create();
 		request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		request.setInterval(5000);
-		request.setFastestInterval(1000);
+		request.setInterval(10000);
+		request.setFastestInterval(5000);
 		myLocationClient.requestLocationUpdates(request, this);
 	}
 
@@ -179,10 +185,43 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public void onLocationChanged(Location loc) {
 		LatLng ll = lc.next();
+		listLatLng.add(ll);
 		Toast.makeText(this,ll.toString(),Toast.LENGTH_SHORT).show();	
-		gotoLatLng(ll,5);
+		gotoLatLng(ll,8);
+
+		//add a marker to the map using MarkerOptions object
+		MarkerOptions options = new MarkerOptions()
+		.title(lc.getName())
+		.position(ll);
+		myMap.addMarker(options);
+		drawLine();
+
 	}
-
-
-
+	
+	/*
+	 * Drow a line on the map between the last two objects on the listLatLng list.
+	 */
+	private void drawLine(){
+		if (listLatLng.size() > 1) {
+		PolylineOptions plo = new PolylineOptions()
+		.add(listLatLng.get(listLatLng.size()-2))
+		.add(listLatLng.getLast())
+		.color(Color.BLUE)
+		.width(5);
+		myMap.addPolyline(plo);
+		}
+	}
+	
+	/*
+	 * Drow a line on the map
+	 */
+	private void drawAllLine(){		
+		if (listLatLng.size() > 1) {
+		PolylineOptions plo = new PolylineOptions()
+		.addAll(listLatLng)
+		.color(Color.BLUE)
+		.width(5);
+		myMap.addPolyline(plo);
+		}	
+	}
 }

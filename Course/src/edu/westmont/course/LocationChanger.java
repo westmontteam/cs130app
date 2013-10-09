@@ -8,6 +8,7 @@ public class LocationChanger extends FragmentActivity implements Iterator<LatLng
 
 	private double latitude = 0;
 	private double longitude = 0;
+	private Integer nameInt = 0;
 	
 	public LocationChanger(){
 		longitude = 180-(Math.random()*360);
@@ -28,11 +29,20 @@ public class LocationChanger extends FragmentActivity implements Iterator<LatLng
 	public boolean hasNext() {
 		return true;
 	}
+	
+	public Integer getNameInt(){
+		return nameInt;
+	}
+	
+	public String getName(){
+		return nameInt.toString();
+	}
 
 	@Override
 	public LatLng next() {
-		longitude += 0.5-Math.random();
-		latitude += 0.5-Math.random();
+		nameInt++;
+		longitude += 1-(2*Math.random());
+		latitude += 1-(2*Math.random());
 		if ((latitude >= 90) || (latitude <= -90)) latitude = 0;
 		if ((longitude >= 180) || (longitude <= -180)) longitude = 0;
 		return new LatLng(latitude, longitude);
