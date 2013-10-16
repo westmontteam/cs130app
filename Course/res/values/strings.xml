@@ -12,6 +12,7 @@
 	<string name="menu_satellite">Satellite</string>
 	<string name="menu_terrain">Terrain</string>
 	<string name="menu_hybrid">Hybrid</string>
-	<string name="current_location">Current Location</string>
+	<string name="show_current">"Show Current Location"</string>
+	<string name="show_all">"Show All Points"</string>
     
 </resources>

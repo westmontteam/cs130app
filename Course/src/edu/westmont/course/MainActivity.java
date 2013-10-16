@@ -1,7 +1,7 @@
 package edu.westmont.course;
 
-import java.util.LinkedList;
 
+import java.util.LinkedList;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -14,10 +14,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 //import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-//
-
+//import edu.westmont.mocklocationclient.Location;
 import android.location.Location;
 import android.os.Bundle;
 import android.app.Dialog;
@@ -27,18 +27,20 @@ import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
-
 
 public class MainActivity extends FragmentActivity implements 
 GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	private static final int GPS_ERRORDIALOG_REQUEST = 0;
 	GoogleMap myMap;
 	LocationClient myLocationClient;
-	int defaultZoom = 5;
-	LocationChanger lc = new LocationChanger(50,55);
+	int defaultZoom = 10;
+	LocationChanger lc = new LocationChanger();
 	LinkedList<LatLng> listLatLng = new LinkedList<LatLng>();
-	
+	LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
+	boolean showCurrentLocation = false;
+
 	/**
 	 * Initiates an instance of the class and if the mapping service is available
 	 * it changes the view to the map view.  Otherwise it displays the main activity view.
@@ -57,15 +59,12 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 				//myMap.setMyLocationEnabled(true);
 			}
 			else Toast.makeText(this, "The map in not available right now.", Toast.LENGTH_SHORT).show();
-
-
 		}
 		else setContentView(R.layout.activity_main);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.map_menu, menu);
 		return true;
 	}
@@ -77,7 +76,11 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	public boolean onOptionsItemSelected(android.view.MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.showCurrentLocation:
-			gotoCurrentLocation();
+			showCurrentLocation = !showCurrentLocation;
+			if (showCurrentLocation)
+				item.setTitle(R.string.show_all);
+			else item.setTitle(R.string.show_current);
+			gotoCurrentLocation(false);
 		case R.id.mapTypeNormal:
 			myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 			break;
@@ -132,43 +135,52 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		return (myMap != null);
 	}
 
-	public void gotoLocation(double lat, double lng, float zoom){
-		LatLng ll = new LatLng(lat,lng);
-		CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll,zoom);
-		myMap.moveCamera(update);
-	}
 
-	public void gotoLatLng(LatLng ll, float zoom){
-		CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll,zoom);
-		myMap.moveCamera(update);
-	}
-
-	protected void gotoCurrentLocation(){
+	protected void gotoCurrentLocation(boolean add){
 		Location location = myLocationClient.getLastLocation();
 		if (location == null){
 			Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
 		}
 		else {
-			LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-			CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
-			myMap.animateCamera(cu);
+			gotoLocation(new LatLng(location.getLatitude(), location.getLongitude()), add);
 			//Display current altitude
 			//Double d = location.getAltitude();
 			//Toast.makeText(this, "Alt: " + d.toString(), Toast.LENGTH_LONG).show();
 		}
 	}
 
-	@Override
-	public void onConnectionFailed(ConnectionResult arg0) {
-		// TODO Auto-generated method stub
-
+	protected void gotoLocation(LatLng ll, boolean add){
+		if (add)
+			addLatLng(ll);
+		CameraUpdate update;
+		if (showCurrentLocation){
+			update = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
+		}
+		else {
+			LatLngBounds bounds = boundsBuilder.build();
+			update = CameraUpdateFactory.newLatLngBounds(bounds, 70);
+		}
+		myMap.animateCamera(update);
 	}
 
+	protected void addLatLng(LatLng ll){
+		listLatLng.add(ll);
+		MarkerOptions options = new MarkerOptions()
+		//.title(lc.getName())
+		.position(ll);
+		myMap.addMarker(options);
+		drawLine();
+		boundsBuilder.include(ll);
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult arg0) {
+		// todo: implement this code by checking if it can be resolved.
+	}
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		//Toast.makeText(this, "Connected to Location Services", Toast.LENGTH_LONG).show();
-		gotoCurrentLocation();
+		//gotoCurrentLocation();
 		LocationRequest request = LocationRequest.create();
 		request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		request.setInterval(10000);
@@ -179,49 +191,39 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onLocationChanged(Location loc) {
-		LatLng ll = lc.next();
-		listLatLng.add(ll);
-		Toast.makeText(this,ll.toString(),Toast.LENGTH_SHORT).show();	
-		gotoLatLng(ll,8);
-
-		//add a marker to the map using MarkerOptions object
-		MarkerOptions options = new MarkerOptions()
-		.title(lc.getName())
-		.position(ll);
-		myMap.addMarker(options);
-		drawLine();
-
+		//gotoCurrentLocation(true);
+		gotoLocation(lc.next(),true);
+		//Toast.makeText(this,lc.toString(),Toast.LENGTH_SHORT).show();	
 	}
-	
+
 	/*
-	 * Drow a line on the map between the last two objects on the listLatLng list.
+	 * Draw a line on the map between the last two objects on the listLatLng list.
 	 */
 	private void drawLine(){
 		if (listLatLng.size() > 1) {
-		PolylineOptions plo = new PolylineOptions()
-		.add(listLatLng.get(listLatLng.size()-2))
-		.add(listLatLng.getLast())
-		.color(Color.BLUE)
-		.width(5);
-		myMap.addPolyline(plo);
+			PolylineOptions plo = new PolylineOptions()
+			.add(listLatLng.get(listLatLng.size()-2))
+			.add(listLatLng.getLast())
+			.color(Color.BLUE)
+			.width(5);
+			myMap.addPolyline(plo);
 		}
 	}
-	
+
 	/*
 	 * Drow a line on the map
 	 */
 	private void drawAllLine(){		
 		if (listLatLng.size() > 1) {
-		PolylineOptions plo = new PolylineOptions()
-		.addAll(listLatLng)
-		.color(Color.BLUE)
-		.width(5);
-		myMap.addPolyline(plo);
+			PolylineOptions plo = new PolylineOptions()
+			.addAll(listLatLng)
+			.color(Color.BLUE)
+			.width(5);
+			myMap.addPolyline(plo);
 		}	
 	}
 }

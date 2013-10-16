@@ -313,13 +313,14 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060012;
-        public static final int current_location=0x7f060024;
         public static final int google_play_error_message=0x7f06001f;
         public static final int hello_world=0x7f06001b;
         public static final int menu_hybrid=0x7f060023;
         public static final int menu_normal=0x7f060020;
         public static final int menu_satellite=0x7f060021;
         public static final int menu_terrain=0x7f060022;
+        public static final int show_all=0x7f060025;
+        public static final int show_current=0x7f060024;
         public static final int title_activity_show_location=0x7f06001d;
     }
     public static final class style {

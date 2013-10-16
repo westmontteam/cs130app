@@ -30,4 +30,10 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>MOCKLOCATIONCLIENT_TEST</name>
+			<value>file:/C:/Users/James/workspace/MockLocationMarker</value>
+		</variable>
+	</variableList>
 </projectDescription>

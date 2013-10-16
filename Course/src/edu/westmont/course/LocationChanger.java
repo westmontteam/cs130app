@@ -1,10 +1,10 @@
 package edu.westmont.course;
 
 import java.util.Iterator;
-import android.support.v4.app.FragmentActivity;
+//import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.maps.model.LatLng;
 
-public class LocationChanger extends FragmentActivity implements Iterator<LatLng> {
+public class LocationChanger implements Iterator<LatLng> {
 
 	private double latitude = 0;
 	private double longitude = 0;
