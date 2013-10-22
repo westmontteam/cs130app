@@ -37,7 +37,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	LocationClient myLocationClient;
 	int defaultZoom = 10;
 	LocationChanger lc = new LocationChanger();
-	LinkedList<LatLng> listLatLng = new LinkedList<LatLng>();
+	LinkedList<Location> listLocation = new LinkedList<Location>();
 	LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
 	boolean showCurrentLocation = false;
 
@@ -142,88 +142,88 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
 		}
 		else {
-			gotoLocation(new LatLng(location.getLatitude(), location.getLongitude()), add);
-			//Display current altitude
-			//Double d = location.getAltitude();
-			//Toast.makeText(this, "Alt: " + d.toString(), Toast.LENGTH_LONG).show();
-		}
+		gotoLocation(location, add);
 	}
+}
 
-	protected void gotoLocation(LatLng ll, boolean add){
-		if (add)
-			addLatLng(ll);
-		CameraUpdate update;
-		if (showCurrentLocation){
-			update = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
-		}
-		else {
-			LatLngBounds bounds = boundsBuilder.build();
-			update = CameraUpdateFactory.newLatLngBounds(bounds, 70);
-		}
-		myMap.animateCamera(update);
+protected void gotoLocation(Location loc, boolean add){
+	LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
+	if (add) {
+		listLocation.add(loc);
+		addLatLngToMap(ll);
 	}
+	CameraUpdate update;
+	if (showCurrentLocation){
+		update = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
+	}
+	else {
+		LatLngBounds bounds = boundsBuilder.build();
+		update = CameraUpdateFactory.newLatLngBounds(bounds, 70);
+	}
+	myMap.animateCamera(update);
+}
 
-	protected void addLatLng(LatLng ll){
-		listLatLng.add(ll);
-		MarkerOptions options = new MarkerOptions()
-		//.title(lc.getName())
-		.position(ll);
-		myMap.addMarker(options);
-		drawLine();
-		boundsBuilder.include(ll);
-	}
+protected void addLatLngToMap(LatLng ll){
+	MarkerOptions options = new MarkerOptions()
+	//.title(lc.getName())
+	.position(ll);
+	myMap.addMarker(options);
+	drawLine();
+	boundsBuilder.include(ll);
+}
 
-	@Override
-	public void onConnectionFailed(ConnectionResult arg0) {
-		// todo: implement this code by checking if it can be resolved.
-	}
+@Override
+public void onConnectionFailed(ConnectionResult arg0) {
+	// todo: implement this code by checking if it can be resolved.
+}
 
-	@Override
-	public void onConnected(Bundle arg0) {
-		//gotoCurrentLocation();
-		LocationRequest request = LocationRequest.create();
-		request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		request.setInterval(10000);
-		request.setFastestInterval(5000);
-		myLocationClient.requestLocationUpdates(request, this);
-	}
+@Override
+public void onConnected(Bundle arg0) {
+	//gotoCurrentLocation();
+	LocationRequest request = LocationRequest.create();
+	request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+	request.setInterval(10000);
+	request.setFastestInterval(5000);
+	myLocationClient.requestLocationUpdates(request, this);
+}
 
-	@Override
-	public void onDisconnected() {
-		// TODO Auto-generated method stub
-	}
+@Override
+public void onDisconnected() {
+	// TODO Auto-generated method stub
+}
 
-	@Override
-	public void onLocationChanged(Location loc) {
-		//gotoCurrentLocation(true);
-		gotoLocation(lc.next(),true);
-		//Toast.makeText(this,lc.toString(),Toast.LENGTH_SHORT).show();	
-	}
+@Override
+public void onLocationChanged(Location loc) {
+	//gotoLocation(loc, true);
+	gotoLocation(lc.next(),true);
+	//Toast.makeText(this,lc.toString(),Toast.LENGTH_SHORT).show();	
+}
 
-	/*
-	 * Draw a line on the map between the last two objects on the listLatLng list.
-	 */
-	private void drawLine(){
-		if (listLatLng.size() > 1) {
-			PolylineOptions plo = new PolylineOptions()
-			.add(listLatLng.get(listLatLng.size()-2))
-			.add(listLatLng.getLast())
-			.color(Color.BLUE)
-			.width(5);
-			myMap.addPolyline(plo);
-		}
+/*
+ * Draw a line on the map between the last two objects on the listLatLng list.
+ */
+private void drawLine(){
+	if (listLocation.size() > 1) {
+		PolylineOptions plo = new PolylineOptions()
+		.add(new LatLng(listLocation.get(listLocation.size()-2).getLatitude(), listLocation.get(listLocation.size()-2).getLongitude()))
+		.add(new LatLng(listLocation.getLast().getLatitude(), listLocation.getLast().getLongitude()))
+		.color(Color.BLUE)
+		.width(5);
+		myMap.addPolyline(plo);
 	}
+}
 
-	/*
-	 * Drow a line on the map
-	 */
-	private void drawAllLine(){		
-		if (listLatLng.size() > 1) {
-			PolylineOptions plo = new PolylineOptions()
-			.addAll(listLatLng)
-			.color(Color.BLUE)
-			.width(5);
-			myMap.addPolyline(plo);
-		}	
+/*
+ * Draw a line on the map
+ */
+/*
+private void drawAllLine(){		
+	if (listLocation.size() > 1) {
+		PolylineOptions plo = new PolylineOptions()
+		.addAll(listLocation)
+		.color(Color.BLUE)
+		.width(5);
+		myMap.addPolyline(plo);
 	}
+}*/
 }
