@@ -35,8 +35,9 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	private static final int GPS_ERRORDIALOG_REQUEST = 0;
 	GoogleMap myMap;
 	LocationClient myLocationClient;
-	int defaultZoom = 10;
+	int defaultZoom = 15;
 	LocationChanger lc = new LocationChanger();
+	DistanceFinder ranger = new DistanceFinder();
 	LinkedList<Location> listLocation = new LinkedList<Location>();
 	LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
 	boolean showCurrentLocation = false;
@@ -55,7 +56,6 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 				Toast.makeText(this, "Ready to map! This is a test.", Toast.LENGTH_SHORT).show();
 				myLocationClient = new LocationClient(this, this, this);
 				myLocationClient.connect();
-				//gotoLocation(34.44914,-119.661673,15);
 				//myMap.setMyLocationEnabled(true);
 			}
 			else Toast.makeText(this, "The map in not available right now.", Toast.LENGTH_SHORT).show();
@@ -149,6 +149,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 protected void gotoLocation(Location loc, boolean add){
 	LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
 	if (add) {
+		ranger.addDistanceToLocation(loc);
+		Toast.makeText(this, ranger.getElapsedTimeString(), Toast.LENGTH_SHORT).show();
 		listLocation.add(loc);
 		addLatLngToMap(ll);
 	}
@@ -165,7 +167,7 @@ protected void gotoLocation(Location loc, boolean add){
 
 protected void addLatLngToMap(LatLng ll){
 	MarkerOptions options = new MarkerOptions()
-	//.title(lc.getName())
+	.title(ranger.getCurrentDistanceString())
 	.position(ll);
 	myMap.addMarker(options);
 	drawLine();
@@ -194,7 +196,7 @@ public void onDisconnected() {
 
 @Override
 public void onLocationChanged(Location loc) {
-	//gotoLocation(loc, true);
+	//gotoLocation(loc,true);
 	gotoLocation(lc.next(),true);
 	//Toast.makeText(this,lc.toString(),Toast.LENGTH_SHORT).show();	
 }

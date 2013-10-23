@@ -50,6 +50,8 @@
         
          <activity
             android:name="edu.westmont.course.LocationChanger" />
+         <activity
+            android:name="edu.westmont.course.DistanceFinder" />
 
             
         <meta-data 
