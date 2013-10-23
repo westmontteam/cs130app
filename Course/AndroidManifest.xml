@@ -3,27 +3,28 @@
     package="edu.westmont.course"
     android:versionCode="1"
     android:versionName="1.0" >
-    
+
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
-  
+
     <!-- Used tutorial: www.lynda.com, "Building Mobile Apps with Google Maps Android API v2" -->
-    <permission 
+    <permission
         android:name="edu.westmont.course.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-    
-    <uses-permission android:name="edu.westmont.course.permission.MAPS_RECEIVE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="edu.westmont.course.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-    
-    <uses-feature android:glEsVersion="0x00020000"
-        android:required="true"/>
-    
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -38,24 +39,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- CREDIT TO http://www.vogella.com/articles/AndroidLocationAPI/article.html#tutlocationapi for some of this activity code -->
+
+        <!-- CREDIT TO http://www.vogella.com for some of this activity code -->
         <activity
-            android:name = "edu.westmont.course.ShowLocationActivity"
+            android:name="edu.westmont.course.ShowLocationActivity"
             android:label="@string/title_activity_show_location"
-            android:parentActivityName = "edu.westmont.course.MainActivity">
+            android:parentActivityName="edu.westmont.course.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.westmont.course.MainActivity" />
         </activity>
-        
-         <activity
-            android:name="edu.westmont.course.LocationChanger" />
+        <activity android:name="edu.westmont.course.LocationChanger" />
 
-            
-        <meta-data 
+        <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyA2cRJz9ENzrAe_GEuCqHAWrEQuhUHiTjw"/>
-        
+            android:value="AIzaSyA2cRJz9ENzrAe_GEuCqHAWrEQuhUHiTjw" />
+
+        <activity
+            android:name="edu.westmont.course.DrawMap"
+            android:label="@string/title_activity_draw_map" >
+        </activity>
     </application>
 
 </manifest>

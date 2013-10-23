@@ -7,12 +7,15 @@
     <string name="action_home">Return to Home Screen</string>
     <string name="title_activity_show_location">ShowLocationActivity</string>
     <string name="button_get_location">Get my location now</string>
-	<string name="google_play_error_message">Unable to connect to Google Play Services.  Sorry about that.</string>
-	<string name="menu_normal">Normal</string>
-	<string name="menu_satellite">Satellite</string>
-	<string name="menu_terrain">Terrain</string>
-	<string name="menu_hybrid">Hybrid</string>
-	<string name="show_current">"Show Current Location"</string>
-	<string name="show_all">"Show All Points"</string>
-    
+    <string name="google_play_error_message">Unable to connect to Google Play Services.  Sorry about that.</string>
+    <string name="menu_normal">Normal</string>
+    <string name="menu_satellite">Satellite</string>
+    <string name="menu_terrain">Terrain</string>
+    <string name="menu_hybrid">Hybrid</string>
+    <string name="show_current">"Show Current Location"</string>
+    <string name="show_all">"Show All Points"</string>
+    <string name="title_activity_draw_map">DrawMap</string>
+    <string name="enter_run_name">Enter run name</string>
+    <string name="button_draw_map">Go!</string>
+
 </resources>
