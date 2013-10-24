@@ -6,6 +6,7 @@ import edu.westmont.course.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ShowLocationActivity extends Activity implements LocationListener {
+    
 	  private TextView latituteField;
 	  private TextView longitudeField;
 	  private LocationManager locationManager;
