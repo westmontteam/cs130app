@@ -37,7 +37,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	GoogleMap myMap;
 	LocationClient myLocationClient;
 	int defaultZoom = 15;
-	LocationChanger lc = new LocationChanger();
+	boolean useDefaultZoom = true;
+	LocationChanger lc = new LocationChanger(40.715842,-74.006237);
 	DistanceFinder ranger = new DistanceFinder();
 	LinkedList<Location> listLocation = new LinkedList<Location>();
 	LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
@@ -55,21 +56,19 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		if (servicesOk()) {
 			setContentView(R.layout.activity_map);
 			if (initMap()){
-				Toast.makeText(this, "Ready to map! This is a test.", Toast.LENGTH_SHORT).show();
 				myLocationClient = new LocationClient(this, this, this);
 				myLocationClient.connect();
-				//myMap.setMyLocationEnabled(true);
 			}
 			else Toast.makeText(this, "The map in not available right now.", Toast.LENGTH_SHORT).show();
 		}
 		else setContentView(R.layout.activity_main);
-		
+
 		Intent intent = getIntent();
 		String runName = intent.getStringExtra(MainActivity.RUN_NAME);
 		Toast.makeText(this, runName, Toast.LENGTH_SHORT).show();
-		
+
 		datasource = new PositionsDataSource(this);
-	    datasource.open();
+		datasource.open();
 		datasource.setRunName(runName);
 	}
 
@@ -87,33 +86,34 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		switch (item.getItemId()) {
 		case R.id.showCurrentLocation:
 			showCurrentLocation = !showCurrentLocation;
-			if (showCurrentLocation)
-				item.setTitle(R.string.show_all);
+			useDefaultZoom = true;
+			if (showCurrentLocation) item.setTitle(R.string.show_all);
 			else item.setTitle(R.string.show_current);
 			gotoCurrentLocation(false);
+			break;
 		case R.id.mapTypeNormal:
-			myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+			changeMapType(GoogleMap.MAP_TYPE_NORMAL);
 			break;
 		case R.id.mapTypeSatellite:
-			myMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+			changeMapType(GoogleMap.MAP_TYPE_SATELLITE);
 			break;
 		case R.id.mapTypeHybrid:
-			myMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+			changeMapType(GoogleMap.MAP_TYPE_HYBRID);
 			break;
 		case R.id.mapTypeTerrain:
-			myMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+			changeMapType(GoogleMap.MAP_TYPE_TERRAIN);
 			break;
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	};
-
-	public void findCoordinates(View view){
-		// Do something in response to button
-		Intent intent = new Intent(this, ShowLocationActivity.class);
-		startActivity(intent);
+	
+	private void changeMapType(int mapType){
+		useDefaultZoom = true;
+		myMap.setMapType(mapType);
 	}
+	
 
 	/**
 	 * Determines if the Google Play Services are available in the current operating environment and returns
@@ -148,88 +148,85 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	protected void gotoCurrentLocation(boolean add){
 		Location location = myLocationClient.getLastLocation();
-		if (location == null){
-			Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
+		if (location == null) Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
+		else gotoLocation(location, add);
+	}
+
+	protected void gotoLocation(Location loc, boolean add){
+		LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
+		if ((add) && (loc.getAccuracy() < 100)) {
+			datasource.createPosition(loc);
+			ranger.addDistanceToLocation(loc);
+			//Toast.makeText(this, ranger.getElapsedTimeString(), Toast.LENGTH_SHORT).show();
+			listLocation.add(loc);
+			addLatLngToMap(ll);
 		}
+		CameraUpdate update;
+		if (showCurrentLocation && useDefaultZoom) {
+			update = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
+			useDefaultZoom = false;
+		}
+		else if (showCurrentLocation) update = CameraUpdateFactory.newLatLng(ll);
 		else {
-		gotoLocation(location, add);
+			LatLngBounds bounds = boundsBuilder.build();
+			update = CameraUpdateFactory.newLatLngBounds(bounds, 70);
+		}
+		myMap.animateCamera(update);
 	}
-}
 
-protected void gotoLocation(Location loc, boolean add){
-	LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
-	if (add) {
-		ranger.addDistanceToLocation(loc);
-		Toast.makeText(this, ranger.getElapsedTimeString(), Toast.LENGTH_SHORT).show();
-		listLocation.add(loc);
-		addLatLngToMap(ll);
+	protected void addLatLngToMap(LatLng ll){
+		MarkerOptions options = new MarkerOptions()
+		.title(ranger.getCurrentDistanceString())
+		.position(ll);
+		myMap.addMarker(options);
+		drawLine();
+		boundsBuilder.include(ll);
 	}
-	CameraUpdate update;
-	if (showCurrentLocation){
-		update = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
+
+	@Override
+	public void onConnectionFailed(ConnectionResult arg0) {
+		// todo: implement this code by checking if it can be resolved.
 	}
-	else {
-		LatLngBounds bounds = boundsBuilder.build();
-		update = CameraUpdateFactory.newLatLngBounds(bounds, 70);
+
+	@Override
+	public void onConnected(Bundle arg0) {
+		//gotoCurrentLocation();
+		LocationRequest request = LocationRequest.create();
+		request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		request.setInterval(10000);
+		request.setFastestInterval(5000);
+		myLocationClient.requestLocationUpdates(request, this);
 	}
-	myMap.animateCamera(update);
-}
 
-protected void addLatLngToMap(LatLng ll){
-	MarkerOptions options = new MarkerOptions()
-	.title(ranger.getCurrentDistanceString())
-	.position(ll);
-	myMap.addMarker(options);
-	drawLine();
-	boundsBuilder.include(ll);
-}
-
-@Override
-public void onConnectionFailed(ConnectionResult arg0) {
-	// todo: implement this code by checking if it can be resolved.
-}
-
-@Override
-public void onConnected(Bundle arg0) {
-	//gotoCurrentLocation();
-	LocationRequest request = LocationRequest.create();
-	request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-	request.setInterval(10000);
-	request.setFastestInterval(5000);
-	myLocationClient.requestLocationUpdates(request, this);
-}
-
-@Override
-public void onDisconnected() {
-	// TODO Auto-generated method stub
-}
-
-@Override
-public void onLocationChanged(Location loc) {
-	//gotoLocation(loc,true);
-	gotoLocation(lc.next(),true);
-	datasource.createPosition(loc);
-	//Toast.makeText(this,lc.toString(),Toast.LENGTH_SHORT).show();	
-}
-
-/*
- * Draw a line on the map between the last two objects on the listLatLng list.
- */
-private void drawLine(){
-	if (listLocation.size() > 1) {
-		PolylineOptions plo = new PolylineOptions()
-		.add(new LatLng(listLocation.get(listLocation.size()-2).getLatitude(), listLocation.get(listLocation.size()-2).getLongitude()))
-		.add(new LatLng(listLocation.getLast().getLatitude(), listLocation.getLast().getLongitude()))
-		.color(Color.BLUE)
-		.width(5);
-		myMap.addPolyline(plo);
+	@Override
+	public void onDisconnected() {
+		// TODO Auto-generated method stub
 	}
-}
 
-/*
- * Draw a line on the map
- */
-/*
+	@Override
+	public void onLocationChanged(Location loc) {
+		//gotoLocation(loc,true);
+		gotoLocation(lc.next(),true);
+	}
+
+	/*
+	 * Draw a line on the map between the last two objects on the listLatLng list.
+	 */
+	private void drawLine(){
+		if (listLocation.size() > 1) {
+			PolylineOptions plo = new PolylineOptions()
+			.add(new LatLng(listLocation.get(listLocation.size()-2).getLatitude(), listLocation.get(listLocation.size()-2).getLongitude()))
+			.add(new LatLng(listLocation.getLast().getLatitude(), listLocation.getLast().getLongitude()))
+			.color(Color.BLUE)
+			.width(5);
+			myMap.addPolyline(plo);
+		}
+	}
+
+	/*
+	 * Draw a line on the map
+	 */
+	/*
 private void drawAllLine(){		
 	if (listLocation.size() > 1) {
 		PolylineOptions plo = new PolylineOptions()

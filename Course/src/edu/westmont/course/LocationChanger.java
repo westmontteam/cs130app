@@ -9,6 +9,7 @@ public class LocationChanger implements Iterator<Location> {
 	private double latitude = 90-(Math.random()*180);;
 	private double longitude = 180-(Math.random()*360);
 	private double altitude = 100;
+	private float accuracy = 10;
 	private Integer nameInt = 1;
 	private String provider = "mockLocationGenerator";
 	
@@ -48,6 +49,7 @@ public class LocationChanger implements Iterator<Location> {
 		loc.setLongitude(longitude);
 		loc.setLatitude(latitude);
 		loc.setAltitude(altitude);
+		loc.setAccuracy(accuracy);
 		loc.setTime(System.currentTimeMillis());
 		nameInt++;
 		altitude += 2-(Math.random()*4);
