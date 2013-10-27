@@ -20,5 +20,8 @@
     <string name="enter_run_name">Enter run name</string>
     <string name="button_draw_map">Go!</string>
     <string name="map_info">Course Detail</string>
+    <string name="stop">Stop</string>
+    <string name="resume">Resume</string>
+    <string name="reset_map">Reset Map</string>
 
 </resources>

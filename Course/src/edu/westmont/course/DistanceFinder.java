@@ -100,7 +100,7 @@ public class DistanceFinder {
 		return lastString;
 	}
 
-	/*public Double calculateAllDistances(Collection<Location> list){
+/*public Double calculateAllDistances(Collection<Location> list){
 		Double distance = 0.0;
 		if (list.size() > 1) {
 			Iterator<Location> iterator = list.iterator();

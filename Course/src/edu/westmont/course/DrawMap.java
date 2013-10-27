@@ -1,6 +1,7 @@
 package edu.westmont.course;
 
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -12,20 +13,18 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-//import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-//import android.R;
-//import edu.westmont.mocklocationclient.Location;
+import com.google.android.gms.plus.model.people.Person.Collection;
 import android.location.Location;
 import android.os.Bundle;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
-//import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
@@ -43,9 +42,12 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected DistanceFinder ranger = new DistanceFinder();
 	protected String userDefinedName = "";
 	protected LinkedList<Location> listLocation = new LinkedList<Location>();
+	protected LinkedList<Marker> listMarker = new LinkedList<Marker>();
+	protected LinkedList<Polyline> listLine = new LinkedList<Polyline>();
 	protected LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
 	protected boolean showCurrentLocation = false;
 	protected boolean moveCamera = true;
+	protected boolean runAgain = true;
 	protected PositionsDataSource datasource;
 
 	/**
@@ -88,6 +90,14 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public boolean onOptionsItemSelected(android.view.MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.stopButton:
+			runAgain = !runAgain;
+			if (runAgain) item.setTitle(R.string.stop);
+			else item.setTitle(R.string.resume);
+			break;
+		case R.id.resetButton:
+			resetMap(true,true,true);
+			break;
 		case R.id.updateMapCamera:
 			moveCamera = !moveCamera;
 			if (moveCamera) item.setTitle(R.string.stay_put);
@@ -190,16 +200,20 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected void gotoCurrentLocation(boolean add){
 		Location location = myLocationClient.getLastLocation();
 		if (location == null) Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
-		else gotoLocation(location, add);
+		else gotoLocation(location,add,add,add);
 	}
 
-	protected void gotoLocation(Location loc, boolean add){
+	protected void gotoLocation(Location loc, boolean includeDatabase, boolean addMarker, boolean addLine){
 		LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
-		if ((add) && (loc.getAccuracy() < 100)) {
-			datasource.createPosition(loc);
-			ranger.addDistanceToLocation(loc);
-			listLocation.add(loc);
-			addLatLngToMap(ll);
+		if (loc.getAccuracy() < 100) {
+			if (includeDatabase || addMarker || addLine) {
+				boundsBuilder.include(ll);
+				listLocation.add(loc);
+				ranger.addDistanceToLocation(loc);
+			}
+			if (includeDatabase) datasource.createPosition(loc);
+			if (addMarker) addLatLngToMap(ll);
+			if (addLine && listLocation.size() > 1) drawLine(listLocation.get(listLocation.size()-2), listLocation.getLast());
 		}
 		if (moveCamera){
 			CameraUpdate update;
@@ -220,9 +234,39 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		MarkerOptions options = new MarkerOptions()
 		.title(userDefinedName)
 		.position(ll);
-		myMap.addMarker(options);
-		drawLine();
-		boundsBuilder.include(ll);
+		listMarker.add(myMap.addMarker(options));
+	}
+
+	/*
+	 * Draw a line on the map between the last two objects on the listLatLng list.
+	 */
+	private void drawLine(Location a, Location b){
+		PolylineOptions plo = new PolylineOptions()
+		.add(new LatLng(a.getLatitude(), a.getLongitude()))
+		.add(new LatLng(b.getLatitude(), b.getLongitude()))
+		.color(Color.BLUE)
+		.width(5);
+		listLine.add(myMap.addPolyline(plo));
+	}
+
+	public void resetMap(boolean resetLocations, boolean resetMarkers, boolean resetLines){
+		if (resetMarkers){
+			Iterator<Marker> markerI = listMarker.iterator();
+			while (markerI.hasNext()){
+				markerI.next().remove();
+			}
+			listMarker = new LinkedList<Marker>();
+		}
+		if (resetLines){
+			Iterator<Polyline> lineI = listLine.iterator();
+			while (lineI.hasNext()){
+				lineI.next().remove();
+			}
+			listLine = new LinkedList<Polyline>();
+		}
+		if (resetLocations){
+			listLocation = new LinkedList<Location>();
+		}
 	}
 
 	@Override
@@ -247,37 +291,23 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onLocationChanged(Location loc) {
-		//gotoLocation(loc,true);
-		gotoLocation(lc.next(),true);
-	}
-
-	/*
-	 * Draw a line on the map between the last two objects on the listLatLng list.
-	 */
-	private void drawLine(){
-		if (listLocation.size() > 1) {
-			PolylineOptions plo = new PolylineOptions()
-			.add(new LatLng(listLocation.get(listLocation.size()-2).getLatitude(), listLocation.get(listLocation.size()-2).getLongitude()))
-			.add(new LatLng(listLocation.getLast().getLatitude(), listLocation.getLast().getLongitude()))
-			.color(Color.BLUE)
-			.width(5);
-			myMap.addPolyline(plo);
+		if (runAgain){
+			//gotoLocation(loc,true);
+			//gotoLocation(lc.next(),true,true,true);
+			addBatch(lc.getBatch(1000), true, true, true);
+			//runAgain = false;
 		}
 	}
 
-	/*
-	 * Draw a line on the map
-	 */
-	/*
-private void drawAllLine(){		
-	if (listLocation.size() > 1) {
-		PolylineOptions plo = new PolylineOptions()
-		.addAll(listLocation)
-		.color(Color.BLUE)
-		.width(5);
-		myMap.addPolyline(plo);
+	public void addBatch(java.util.Collection<Location> list, boolean addDatabase, boolean addMarker, boolean addLine){
+		Iterator<Location> iterator = list.iterator();
+		moveCamera = false; 
+		while (iterator.hasNext()){
+			gotoLocation(iterator.next(),false,true,true);
+		}
+		moveCamera = true;
+		gotoLocation(listLocation.getLast(),false,false,false);
 	}
-}*/
 }
 
 

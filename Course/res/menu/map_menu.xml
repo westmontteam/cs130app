@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <!-- Credit to lynda.com, Building Android Apps with Google Maps API v2 -->
-    
-    <item 
-        android:id="@+id/showCurrentLocation"
-        android:title="@string/show_current"
-        android:showAsAction="never"/>
-    
-        <item 
-        android:id="@+id/updateMapCamera"
-        android:title="@string/stay_put"
-        android:showAsAction="never"/>
-    
-    <item 
-        android:id="@+id/mapTypeNormal"
-        android:title="@string/menu_normal"
-    	android:showAsAction="never"/>
-    
-    <item 
-        android:id="@+id/mapTypeSatellite"
-        android:title="@string/menu_satellite"
-        android:showAsAction="never"/>
-    
-    <item 
-        android:id="@+id/mapTypeTerrain"
-        android:title="@string/menu_terrain"
-		android:showAsAction="never"/>
 
-    <item 
+    <!-- Credit to lynda.com, Building Android Apps with Google Maps API v2 -->
+
+    <item
+        android:id="@+id/stopButton"
+        android:orderInCategory="93"
+        android:showAsAction="ifRoom"
+        android:title="@string/stop"/>
+    <item
+        android:id="@+id/resetButton"
+        android:orderInCategory="94"
+        android:showAsAction="ifRoom"
+        android:title="@string/reset_map"/>
+    <item
+        android:id="@+id/showCurrentLocation"
+        android:orderInCategory="95"
+        android:showAsAction="never"
+        android:title="@string/show_current"/>
+    <item
+        android:id="@+id/updateMapCamera"
+        android:orderInCategory="96"
+        android:showAsAction="never"
+        android:title="@string/stay_put"/>
+    <item
+        android:id="@+id/mapTypeNormal"
+        android:orderInCategory="97"
+        android:showAsAction="never"
+        android:title="@string/menu_normal"/>
+    <item
+        android:id="@+id/mapTypeSatellite"
+        android:orderInCategory="98"
+        android:showAsAction="never"
+        android:title="@string/menu_satellite"/>
+    <item
+        android:id="@+id/mapTypeTerrain"
+        android:orderInCategory="99"
+        android:showAsAction="never"
+        android:title="@string/menu_terrain"/>
+    <item
         android:id="@+id/mapTypeHybrid"
-        android:title="@string/menu_hybrid"
-        android:showAsAction="never"/>
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_hybrid"/>
+
 </menu>

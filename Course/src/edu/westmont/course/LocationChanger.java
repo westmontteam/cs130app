@@ -1,6 +1,8 @@
 package edu.westmont.course;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+
 import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -65,6 +67,14 @@ public class LocationChanger implements Iterator<Location> {
 	public void remove() {
 		latitude = 0;
 		longitude = 0;
+	}
+	
+	public LinkedList<Location> getBatch(int number){
+		LinkedList<Location> output = new LinkedList<Location>();
+		for (int i = 0; i < number; i++){
+			output.add(next());
+		}
+		return output;
 	}
 
 }
