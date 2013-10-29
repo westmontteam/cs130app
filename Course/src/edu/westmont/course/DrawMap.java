@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.plus.model.people.Person.Collection;
 import android.location.Location;
 import android.os.Bundle;
 import android.app.Dialog;
@@ -266,6 +265,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 		if (resetLocations){
 			listLocation = new LinkedList<Location>();
+			ranger = new DistanceFinder();
+			boundsBuilder = LatLngBounds.builder();
 		}
 	}
 
@@ -286,7 +287,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onDisconnected() {
-		// TODO Auto-generated method stub
+		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_LONG);
 	}
 
 	@Override
@@ -294,8 +295,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		if (runAgain){
 			//gotoLocation(loc,true);
 			//gotoLocation(lc.next(),true,true,true);
-			addBatch(lc.getBatch(1000), true, true, true);
-			//runAgain = false;
+			addBatch(lc.getBatch(100), true, true, true);
 		}
 	}
 
@@ -309,5 +309,3 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		gotoLocation(listLocation.getLast(),false,false,false);
 	}
 }
-
-
