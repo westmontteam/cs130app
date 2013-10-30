@@ -35,7 +35,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	private static final int GPS_ERRORDIALOG_REQUEST = 0;
 	GoogleMap myMap;
 	protected LocationClient myLocationClient;
-	protected int defaultZoom = 15;
+	protected int defaultZoom = 14;
 	protected boolean useDefaultZoom = true;
 	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
 	protected DistanceFinder ranger = new DistanceFinder();
@@ -48,6 +48,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected boolean moveCamera = true;
 	protected boolean runAgain = true;
 	protected PositionsDataSource datasource;
+	protected LinkedList<String[]> MarkerStrings = new LinkedList<String[]>();
 
 	/**
 	 * Initiates an instance of the class and if the mapping service is available
@@ -68,13 +69,12 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		else setContentView(R.layout.activity_main);
 
 		Intent intent = getIntent();
-		String runName = intent.getStringExtra(MainActivity.RUN_NAME);
-		Toast.makeText(this, runName, Toast.LENGTH_SHORT).show();
+		userDefinedName = intent.getStringExtra(MainActivity.RUN_NAME);
+		Toast.makeText(this, userDefinedName, Toast.LENGTH_SHORT).show();
 
-		userDefinedName = runName;
 		datasource = new PositionsDataSource(this);
 		datasource.open();
-		datasource.setRunName(runName);
+		datasource.setRunName(userDefinedName);
 	}
 
 	@Override
@@ -155,6 +155,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		else Toast.makeText(this, R.string.google_play_error_message, Toast.LENGTH_SHORT).show();
 		return false;
 	}
+
 	/**
 	 * Initiates the map with the purpose of getting a reference to it.
 	 * @return a boolean indicating if the map has been initiated.
@@ -181,13 +182,15 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 					TextView tv3 = (TextView) v.findViewById(R.id.tv_text3);
 					TextView tv4 = (TextView) v.findViewById(R.id.tv_text4);
 					TextView tv5 = (TextView) v.findViewById(R.id.tv_text5);
-					String[] markerText = ranger.getLastString();
-					tvtitle.setText(marker.getTitle());
-					tv1.setText(markerText[0]);
-					tv2.setText(markerText[1]);
-					tv3.setText(markerText[2]);
-					tv4.setText(markerText[3]);
-					tv5.setText(markerText[4]);
+					int ref = Integer.parseInt(marker.getTitle())-1;
+					tvtitle.setText(marker.getTitle() + ". " + userDefinedName);
+					if (ref < MarkerStrings.size()){
+						tv1.setText(MarkerStrings.get(ref)[0]);
+						tv2.setText(MarkerStrings.get(ref)[1]);
+						tv3.setText(MarkerStrings.get(ref)[2]);
+						tv4.setText(MarkerStrings.get(ref)[3]);
+						tv5.setText(MarkerStrings.get(ref)[4]);
+					}
 					return v;
 				}
 			});
@@ -211,7 +214,10 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 				ranger.addDistanceToLocation(loc);
 			}
 			if (includeDatabase) datasource.createPosition(loc);
-			if (addMarker) addLatLngToMap(ll);
+			if (addMarker) {
+				MarkerStrings.add(ranger.getLastString());
+				addLatLngToMap(ll);
+			}
 			if (addLine && listLocation.size() > 1) drawLine(listLocation.get(listLocation.size()-2), listLocation.getLast());
 		}
 		if (moveCamera){
@@ -231,7 +237,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	protected void addLatLngToMap(LatLng ll){
 		MarkerOptions options = new MarkerOptions()
-		.title(userDefinedName)
+		.title(ranger.getNameInt())
 		.position(ll);
 		listMarker.add(myMap.addMarker(options));
 	}
@@ -266,6 +272,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		if (resetLocations){
 			listLocation = new LinkedList<Location>();
 			ranger = new DistanceFinder();
+			MarkerStrings = new LinkedList<String[]>();
 			boundsBuilder = LatLngBounds.builder();
 		}
 	}
@@ -277,7 +284,6 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		//gotoCurrentLocation();
 		LocationRequest request = LocationRequest.create();
 		request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		request.setInterval(10000);
@@ -294,14 +300,14 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	public void onLocationChanged(Location loc) {
 		if (runAgain){
 			//gotoLocation(loc,true,true,true);
-			gotoLocation(lc.next(),false,true,true);
+			gotoLocation(lc.next(),true,true,true);
 			//addBatch(lc.getBatch(100),false,true,true);
 		}
 	}
 
 	public void addBatch(java.util.Collection<Location> list, boolean addDatabase, boolean addMarker, boolean addLine){
 		Iterator<Location> iterator = list.iterator();
-		moveCamera = false; 
+		moveCamera = false;
 		while (iterator.hasNext()){
 			gotoLocation(iterator.next(),addDatabase,addMarker,addLine);
 		}

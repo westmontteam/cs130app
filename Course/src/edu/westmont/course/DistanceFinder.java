@@ -16,6 +16,11 @@ public class DistanceFinder {
 	private Location previousLocation = null;
 	private long startTime = 1;
 	private String[] lastString = new String[5];
+	private int nameInt = 0;
+
+	public String getNameInt(){
+		return String.valueOf(nameInt);
+	}
 
 	public String usingMetricOrImperial(){
 		if (useMetric)
@@ -27,7 +32,7 @@ public class DistanceFinder {
 		useMetric = !useMetric;
 	}
 
-	public double getTotalDistance(){
+	public Double getTotalDistance(){
 		return totalDistance;
 	}
 
@@ -35,14 +40,13 @@ public class DistanceFinder {
 		altitudeChange += Math.abs(previousLocation.getAltitude()-current);
 	}
 
-	public double getTotalAltitudeChange(){
+	public Double getTotalAltitudeChange(){
 		if (useMetric) return altitudeChange;
 		return altitudeChange*imperialConversion;
 	}
 
-	public Double getAverageSpeed(long timeMillis, double meters){
-		Long l = Long.valueOf(timeMillis);
-		double hours = l.doubleValue()/3600000;
+	public Double getAverageSpeed(Long timeMillis, double meters){
+		double hours = timeMillis.doubleValue()/3600000;
 		double distance = meters;
 		if (useMetric) distance /= 1000;
 		else distance = (distance*imperialConversion)/5280;
@@ -51,7 +55,7 @@ public class DistanceFinder {
 	}
 
 
-	public String getSpeedString(double speed){
+	public String getSpeedString(Double speed){
 		String output = oneDecimal.format(speed); 
 		if (useMetric) output += " kph";
 		else output += " mph";
@@ -62,13 +66,19 @@ public class DistanceFinder {
 		return getDistanceString(totalDistance);
 	}
 
-	public String getDistanceString(double dist){
+	public String getDistanceString(Double dist){
 		if (useMetric)
 			return formatDistanceString(dist);
 		return formatDistanceString(dist*imperialConversion);
 	}
 
-	private String formatDistanceString(double dist){
+	public String getAltitudeString(double alt){
+		if (useMetric)
+			return noDecimal.format(alt) + " meters";
+		return noDecimal.format(alt*imperialConversion) + " feet";
+	}
+	
+	private String formatDistanceString(Double dist){
 		if ((useMetric) && (dist >= 1000))
 			return oneDecimal.format(dist/1000) + " km";
 		if ((!useMetric) && (dist >= 5280))
@@ -79,6 +89,7 @@ public class DistanceFinder {
 	}
 
 	public void reset(){
+		nameInt = 0;
 		altitudeChange = 0.0;
 		totalDistance = 0.0;
 		previousLocation = null;
@@ -86,6 +97,7 @@ public class DistanceFinder {
 	}
 
 	public void addDistanceToLocation(Location loc){
+		nameInt++;
 		double currentDistance = 0.0;
 		if (previousLocation != null) {
 			addToAltitudeChange(loc.getAltitude());
@@ -96,12 +108,12 @@ public class DistanceFinder {
 		lastString = formatTitleString(loc.getTime(), currentDistance, loc.getAltitude());
 		previousLocation = loc;
 	}
-	
+
 	public String[] getLastString(){
 		return lastString;
 	}
 
-/*public Double calculateAllDistances(Collection<Location> list){
+	/*public Double calculateAllDistances(Collection<Location> list){
 		Double distance = 0.0;
 		if (list.size() > 1) {
 			Iterator<Location> iterator = list.iterator();
@@ -141,8 +153,8 @@ public class DistanceFinder {
 					"Time: " + getElapsedTimeString(currentTime),
 					"Speed: " + getSpeedString(getAverageSpeed((currentTime-previousLocation.getTime()), currentDistance)), 
 					"Avg. Speed: " + getSpeedString(getAverageSpeed(getElapsedTimeMillis(currentTime), getTotalDistance())),
-					"Altitude: " + noDecimal.format(currentAltitude)};
+					"Altitude: " + getAltitudeString(currentAltitude)};
 		}
-		return new String[] {"Distance: Start","Time: 0","Speed: 0","Avg. Speed: 0","Altitude: " + noDecimal.format(currentAltitude)};
+		return new String[] {"Distance: Start","Time: " + getSpeedString(0.0),"Speed: " + getSpeedString(0.0),"Avg. Speed: 0","Altitude: " + getAltitudeString(currentAltitude)};
 	}
 }
