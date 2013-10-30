@@ -293,9 +293,9 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public void onLocationChanged(Location loc) {
 		if (runAgain){
-			//gotoLocation(loc,true);
-			//gotoLocation(lc.next(),true,true,true);
-			addBatch(lc.getBatch(100), true, true, true);
+			//gotoLocation(loc,true,true,true);
+			gotoLocation(lc.next(),false,true,true);
+			//addBatch(lc.getBatch(100),false,true,true);
 		}
 	}
 
@@ -303,7 +303,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		Iterator<Location> iterator = list.iterator();
 		moveCamera = false; 
 		while (iterator.hasNext()){
-			gotoLocation(iterator.next(),false,true,true);
+			gotoLocation(iterator.next(),addDatabase,addMarker,addLine);
 		}
 		moveCamera = true;
 		gotoLocation(listLocation.getLast(),false,false,false);

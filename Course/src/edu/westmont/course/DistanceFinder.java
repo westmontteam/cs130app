@@ -27,7 +27,7 @@ public class DistanceFinder {
 		useMetric = !useMetric;
 	}
 
-	public Double getTotalDistance(){
+	public double getTotalDistance(){
 		return totalDistance;
 	}
 
@@ -35,13 +35,14 @@ public class DistanceFinder {
 		altitudeChange += Math.abs(previousLocation.getAltitude()-current);
 	}
 
-	public Double getTotalAltitudeChange(){
+	public double getTotalAltitudeChange(){
 		if (useMetric) return altitudeChange;
 		return altitudeChange*imperialConversion;
 	}
 
-	public Double getAverageSpeed(Long timeMillis, double meters){
-		double hours = timeMillis.doubleValue()/3600000;
+	public Double getAverageSpeed(long timeMillis, double meters){
+		Long l = Long.valueOf(timeMillis);
+		double hours = l.doubleValue()/3600000;
 		double distance = meters;
 		if (useMetric) distance /= 1000;
 		else distance = (distance*imperialConversion)/5280;
@@ -50,7 +51,7 @@ public class DistanceFinder {
 	}
 
 
-	public String getSpeedString(Double speed){
+	public String getSpeedString(double speed){
 		String output = oneDecimal.format(speed); 
 		if (useMetric) output += " kph";
 		else output += " mph";
@@ -61,13 +62,13 @@ public class DistanceFinder {
 		return getDistanceString(totalDistance);
 	}
 
-	public String getDistanceString(Double dist){
+	public String getDistanceString(double dist){
 		if (useMetric)
 			return formatDistanceString(dist);
 		return formatDistanceString(dist*imperialConversion);
 	}
 
-	private String formatDistanceString(Double dist){
+	private String formatDistanceString(double dist){
 		if ((useMetric) && (dist >= 1000))
 			return oneDecimal.format(dist/1000) + " km";
 		if ((!useMetric) && (dist >= 5280))
