@@ -48,6 +48,12 @@
                 android:value="edu.westmont.course.MainActivity" />
         </activity>
         
+         <activity
+            android:name="edu.westmont.course.LocationChanger" />
+         <activity
+            android:name="edu.westmont.course.DistanceFinder" />
+
+            
         <meta-data 
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyA2cRJz9ENzrAe_GEuCqHAWrEQuhUHiTjw"/>

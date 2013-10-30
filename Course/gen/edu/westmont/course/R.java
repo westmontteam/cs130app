@@ -194,6 +194,10 @@ containing a value of this type.
         public static final int action_home=0x7f05000e;
         public static final int action_settings=0x7f05000d;
         public static final int hybrid=0x7f050004;
+        public static final int item1=0x7f050014;
+        public static final int item2=0x7f050015;
+        public static final int item3=0x7f050016;
+        public static final int item4=0x7f050017;
         public static final int linearLayout1=0x7f050007;
         public static final int linearLayout2=0x7f05000a;
         public static final int map=0x7f050006;
@@ -217,6 +221,7 @@ containing a value of this type.
         public static final int main=0x7f090000;
         public static final int map_menu=0x7f090001;
         public static final int show_location=0x7f090002;
+        public static final int test_menu=0x7f090003;
     }
     public static final class string {
         public static final int action_home=0x7f06001c;
@@ -313,13 +318,14 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060012;
-        public static final int current_location=0x7f060024;
         public static final int google_play_error_message=0x7f06001f;
         public static final int hello_world=0x7f06001b;
         public static final int menu_hybrid=0x7f060023;
         public static final int menu_normal=0x7f060020;
         public static final int menu_satellite=0x7f060021;
         public static final int menu_terrain=0x7f060022;
+        public static final int show_all=0x7f060025;
+        public static final int show_current=0x7f060024;
         public static final int title_activity_show_location=0x7f06001d;
     }
     public static final class style {
