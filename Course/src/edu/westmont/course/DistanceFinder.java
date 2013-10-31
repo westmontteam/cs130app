@@ -1,3 +1,4 @@
+
 package edu.westmont.course;
 
 import java.text.DecimalFormat;
@@ -16,6 +17,11 @@ public class DistanceFinder {
 	private Location previousLocation = null;
 	private long startTime = 1;
 	private String[] lastString = new String[5];
+	private int nameInt = 0;
+
+	public String getNameInt(){
+		return String.valueOf(nameInt);
+	}
 
 	public String usingMetricOrImperial(){
 		if (useMetric)
@@ -67,6 +73,12 @@ public class DistanceFinder {
 		return formatDistanceString(dist*imperialConversion);
 	}
 
+	public String getAltitudeString(double alt){
+		if (useMetric)
+			return noDecimal.format(alt) + " meters";
+		return noDecimal.format(alt*imperialConversion) + " feet";
+	}
+	
 	private String formatDistanceString(Double dist){
 		if ((useMetric) && (dist >= 1000))
 			return oneDecimal.format(dist/1000) + " km";
@@ -78,6 +90,7 @@ public class DistanceFinder {
 	}
 
 	public void reset(){
+		nameInt = 0;
 		altitudeChange = 0.0;
 		totalDistance = 0.0;
 		previousLocation = null;
@@ -85,6 +98,7 @@ public class DistanceFinder {
 	}
 
 	public void addDistanceToLocation(Location loc){
+		nameInt++;
 		double currentDistance = 0.0;
 		if (previousLocation != null) {
 			addToAltitudeChange(loc.getAltitude());
@@ -95,12 +109,12 @@ public class DistanceFinder {
 		lastString = formatTitleString(loc.getTime(), currentDistance, loc.getAltitude());
 		previousLocation = loc;
 	}
-	
+
 	public String[] getLastString(){
 		return lastString;
 	}
 
-/*public Double calculateAllDistances(Collection<Location> list){
+	/*public Double calculateAllDistances(Collection<Location> list){
 		Double distance = 0.0;
 		if (list.size() > 1) {
 			Iterator<Location> iterator = list.iterator();
@@ -140,8 +154,9 @@ public class DistanceFinder {
 					"Time: " + getElapsedTimeString(currentTime),
 					"Speed: " + getSpeedString(getAverageSpeed((currentTime-previousLocation.getTime()), currentDistance)), 
 					"Avg. Speed: " + getSpeedString(getAverageSpeed(getElapsedTimeMillis(currentTime), getTotalDistance())),
-					"Altitude: " + noDecimal.format(currentAltitude)};
+					"Altitude: " + getAltitudeString(currentAltitude)};
 		}
-		return new String[] {"Distance: Start","Time: 0","Speed: 0","Avg. Speed: 0","Altitude: " + noDecimal.format(currentAltitude)};
+		return new String[] {"Distance: Start","Time: " + getSpeedString(0.0),"Speed: " + getSpeedString(0.0),"Avg. Speed: 0","Altitude: " + getAltitudeString(currentAltitude)};
 	}
 }
+//>>>>>>> refs/remotes/origin/master
