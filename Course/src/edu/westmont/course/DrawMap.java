@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +51,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected boolean runAgain = true;
 	protected PositionsDataSource datasource;
 	protected LinkedList<String[]> MarkerStrings = new LinkedList<String[]>();
+	protected Menu menuBar;
 
 	/**
 	 * Initiates an instance of the class and if the mapping service is available
@@ -81,7 +83,24 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.map_menu, menu);
+		menuBar = menu;
+		if (menuBar != null) refreshMenuItems();
 		return true;
+	}
+
+	public void refreshMenuItems(){
+		MenuItem stopButton = menuBar.findItem(R.id.stopButton);
+		MenuItem updateCameraButton = menuBar.findItem(R.id.updateMapCamera);
+		MenuItem showLocationButton = menuBar.findItem(R.id.showCurrentLocation);
+
+		if (runAgain) stopButton.setTitle(R.string.stop);
+		else stopButton.setTitle(R.string.resume);
+
+		if (moveCamera) updateCameraButton.setTitle(R.string.stay_put);
+		else updateCameraButton.setTitle(R.string.fly_to);
+
+		if (showCurrentLocation) showLocationButton.setTitle(R.string.show_all);
+		else showLocationButton.setTitle(R.string.show_current);
 	}
 
 	/**
@@ -92,28 +111,21 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		switch (item.getItemId()) {
 		case R.id.stopButton:
 			runAgain = !runAgain;
-			if (runAgain) item.setTitle(R.string.stop);
-			else item.setTitle(R.string.resume);
+			refreshMenuItems();
 			break;
 		case R.id.resetButton:
 			resetMap(true,true,true);
 			break;
 		case R.id.updateMapCamera:
 			moveCamera = !moveCamera;
-			if (moveCamera) item.setTitle(R.string.stay_put);
-			else {
-				item.setTitle(R.string.fly_to);
-				gotoCurrentLocation(false);
-			}
+			if (moveCamera) gotoCurrentLocation(false);
+			refreshMenuItems();
 			break;
 		case R.id.showCurrentLocation:
 			showCurrentLocation = !showCurrentLocation;
-			if (showCurrentLocation) {
-				useDefaultZoom = true;
-				item.setTitle(R.string.show_all);
-			}
-			else item.setTitle(R.string.show_current);
+			if (showCurrentLocation) useDefaultZoom = true;
 			gotoCurrentLocation(false);
+			refreshMenuItems();
 			break;
 		case R.id.mapTypeNormal:
 			changeMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -136,6 +148,25 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	private void changeMapType(int mapType){
 		useDefaultZoom = true;
 		myMap.setMapType(mapType);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		MapStateManager mgr = new MapStateManager(this);
+		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		MapStateManager mgr = new MapStateManager(this);
+		if (mgr.checkSavedStatus()) {
+			showCurrentLocation = mgr.getShowCurrentPosition();
+			moveCamera = mgr.getMoveCamera();
+			runAgain = mgr.getRunState();
+			changeMapType(mgr.getMapType());
+		}
 	}
 
 	/**
