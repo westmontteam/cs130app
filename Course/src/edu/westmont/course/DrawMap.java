@@ -186,11 +186,11 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 					int ref = Integer.parseInt(marker.getTitle())-1;
 					tvtitle.setText(marker.getTitle() + ". " + userDefinedName);
 					if (ref < MarkerStrings.size()){
-						tv1.setText(MarkerStrings.get(ref)[0]);
-						tv2.setText(MarkerStrings.get(ref)[1]);
-						tv3.setText(MarkerStrings.get(ref)[2]);
-						tv4.setText(MarkerStrings.get(ref)[3]);
-						tv5.setText(MarkerStrings.get(ref)[4]);
+						tv1.setText("Distance: " + MarkerStrings.get(ref)[0]);
+						tv2.setText("Time: " + MarkerStrings.get(ref)[1]);
+						tv3.setText("Speed: " + MarkerStrings.get(ref)[2]);
+						tv4.setText("Avg. Speed: " + MarkerStrings.get(ref)[3]);
+						tv5.setText("Altitude: " + MarkerStrings.get(ref)[4]);
 					}
 					return v;
 				}

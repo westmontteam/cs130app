@@ -114,20 +114,6 @@ public class DistanceFinder {
 		return lastString;
 	}
 
-	/*public Double calculateAllDistances(Collection<Location> list){
-		Double distance = 0.0;
-		if (list.size() > 1) {
-			Iterator<Location> iterator = list.iterator();
-			Location previous = iterator.next();
-			while (iterator.hasNext()) {
-				Location current = iterator.next();
-				distance += current.distanceTo(previous);
-				previous = current;
-			}
-		}
-		return distance;
-	}*/
-
 	public Long getElapsedTimeMillis(long currentTime){
 		return currentTime-startTime;
 	}
@@ -150,13 +136,12 @@ public class DistanceFinder {
 
 	public String[] formatTitleString(long currentTime, double currentDistance, double currentAltitude){
 		if (previousLocation != null) {
-			return new String[] {"Distance: " + getTotalDistanceString(), 
-					"Time: " + getElapsedTimeString(currentTime),
-					"Speed: " + getSpeedString(getAverageSpeed((currentTime-previousLocation.getTime()), currentDistance)), 
-					"Avg. Speed: " + getSpeedString(getAverageSpeed(getElapsedTimeMillis(currentTime), getTotalDistance())),
-					"Altitude: " + getAltitudeString(currentAltitude)};
+			return new String[] {getTotalDistanceString(), 
+					getElapsedTimeString(currentTime),
+					getSpeedString(getAverageSpeed((currentTime-previousLocation.getTime()), currentDistance)), 
+					getSpeedString(getAverageSpeed(getElapsedTimeMillis(currentTime), getTotalDistance())),
+					getAltitudeString(currentAltitude)};
 		}
-		return new String[] {"Distance: Start","Time: " + getSpeedString(0.0),"Speed: " + getSpeedString(0.0),"Avg. Speed: 0","Altitude: " + getAltitudeString(currentAltitude)};
+		return new String[] {"Start","00:00:00",getSpeedString(0.0),getSpeedString(0.0),getAltitudeString(currentAltitude)};
 	}
 }
-//>>>>>>> refs/remotes/origin/master
