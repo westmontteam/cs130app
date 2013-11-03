@@ -164,6 +164,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	public boolean initMap(){
 		if (myMap == null){
 			SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+			//mapFrag.setRetainInstance(true);
 			myMap = mapFrag.getMap();
 		}
 		if (myMap != null){
