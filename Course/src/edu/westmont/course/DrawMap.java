@@ -26,6 +26,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,9 +76,14 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		userDefinedName = intent.getStringExtra(MainActivity.RUN_NAME);
 		Toast.makeText(this, userDefinedName, Toast.LENGTH_SHORT).show();
 
+		Log.w("DrawMap","opening database");
 		datasource = new PositionsDataSource(this);
 		datasource.open();
+		Log.w("DrawMap","setting run Name: " + userDefinedName);
 		datasource.setRunName(userDefinedName);
+		Log.w("DrawMap","making run");
+		datasource.makeRun();
+		datasource.displayAllTables();//to Log
 	}
 
 	@Override

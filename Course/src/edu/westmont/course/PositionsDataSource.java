@@ -2,6 +2,7 @@
 package edu.westmont.course;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -10,19 +11,19 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
 public class PositionsDataSource {
 	
-  public String run = "not initialized";
+  public String run = "default";
 
   // Database fields
   private SQLiteDatabase database;
   private MySQLiteHelper dbHelper;
   private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
-      MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE, MySQLiteHelper.COLUMN_HEIGHT,
-      MySQLiteHelper.COLUMN_RUN};
+      MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE, MySQLiteHelper.COLUMN_HEIGHT};
 
   public PositionsDataSource(Context context) {
     dbHelper = new MySQLiteHelper(context);
@@ -41,10 +42,10 @@ public class PositionsDataSource {
     values.put(MySQLiteHelper.COLUMN_LATITUDE, loc.getLatitude());
     values.put(MySQLiteHelper.COLUMN_LONGITUDE, loc.getLongitude());
     values.put(MySQLiteHelper.COLUMN_HEIGHT, loc.getAltitude());
-    values.put(MySQLiteHelper.COLUMN_RUN, run);
-    long insertId = database.insert(MySQLiteHelper.TABLE_POSITIONS, null,
+    //values.put(MySQLiteHelper.COLUMN_RUN, run);
+    long insertId = database.insert(run, null,
         values);
-    Cursor cursor = database.query(MySQLiteHelper.TABLE_POSITIONS,
+    Cursor cursor = database.query(run,
         allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
         null, null, null);
     cursor.moveToFirst();
@@ -53,6 +54,7 @@ public class PositionsDataSource {
     return newPosition;
   }
 
+  //TODO fix this to work with multiple tables.
   public void deletePosition(Position position) {
     long id = position.getId();
     System.out.println("Position deleted with id: " + id);
@@ -61,9 +63,36 @@ public class PositionsDataSource {
   }
   
   public void setRunName(String runName){
-	  run = runName;
+	  run = sanitizeInput(runName);
+  }
+  
+  //set the run name prior to calling this method.
+  public void makeRun(){
+	  if(!tableContains(run)) dbHelper.createTable(database,run);
+  }
+  
+  public boolean tableContains(String tablename){
+	  Cursor cursor = dbHelper.showAllTables(database);
+	    if (cursor.moveToFirst()){
+	    	do{
+	    		if(cursor.getString(0).equals(tablename)) return true;
+	    	}while (cursor.moveToNext());
+	    }
+	    return false;
+  }
+  
+  //logs all table names.
+  public void displayAllTables(){
+	  Cursor cursor = dbHelper.showAllTables(database);
+	  Log.w(MySQLiteHelper.class.getName(),"the current tables are: ");
+	    if (cursor.moveToFirst()){
+	    	do{
+	    		Log.w(MySQLiteHelper.class.getName(),cursor.getString(0));
+	    	}while (cursor.moveToNext());
+	    }
   }
 
+  //TODO get this to work with multiple tables.
   public List<Position> getAllPositions() {
     List<Position> positions = new ArrayList<Position>();
 
@@ -87,5 +116,11 @@ public class PositionsDataSource {
     position.setll(new LatLng(cursor.getDouble(1),cursor.getDouble(2)));
     position.setHeight(cursor.getDouble(3));
     return position;
+  }
+  
+  private String sanitizeInput(String runName){
+	  runName = runName.trim();
+	  runName = runName.replaceAll("[^[a-zA-Z_0-9]]", "_");
+	  return runName;
   }
 } 
