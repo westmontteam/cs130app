@@ -42,7 +42,6 @@ public class PositionsDataSource {
     values.put(MySQLiteHelper.COLUMN_LATITUDE, loc.getLatitude());
     values.put(MySQLiteHelper.COLUMN_LONGITUDE, loc.getLongitude());
     values.put(MySQLiteHelper.COLUMN_HEIGHT, loc.getAltitude());
-    //values.put(MySQLiteHelper.COLUMN_RUN, run);
     long insertId = database.insert(run, null,
         values);
     Cursor cursor = database.query(run,

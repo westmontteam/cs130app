@@ -14,7 +14,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_LATITUDE = "latitude";
   public static final String COLUMN_LONGITUDE = "longitude";
   public static final String COLUMN_HEIGHT = "height";
-  //public static final String COLUMN_RUN = "run";
 
   private static final String DATABASE_NAME = "positions.db";
   private static final int DATABASE_VERSION = 6;
@@ -31,7 +30,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase database) {
-    //createTable(database,"defualt"); //TODO test if I need a default table.
+
   }
 
   @Override
