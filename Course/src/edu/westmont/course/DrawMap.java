@@ -161,6 +161,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		super.onStop();
 		MapStateManager mgr = new MapStateManager(this);
 		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain);
+		myLocationClient.disconnect();
 	}
 
 	@Override
@@ -332,7 +333,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onDisconnected() {
-		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_LONG);
+		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
