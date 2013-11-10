@@ -4,6 +4,8 @@ package edu.westmont.course;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -50,6 +52,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected boolean showCurrentLocation = false;
 	protected boolean moveCamera = true;
 	protected boolean runAgain = true;
+	protected boolean rebooted = true;
 	protected PositionsDataSource datasource;
 	protected LinkedList<String[]> MarkerStrings = new LinkedList<String[]>();
 	protected Menu menuBar;
@@ -79,11 +82,9 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		Log.w("DrawMap","opening database");
 		datasource = new PositionsDataSource(this);
 		datasource.open();
-		Log.w("DrawMap","setting run Name: " + userDefinedName);
 		datasource.setRunName(userDefinedName);
-		Log.w("DrawMap","making run");
 		datasource.makeRun();
-		datasource.displayAllTables();//to Log
+		datasource.displayAllTables();//to the Log
 	}
 
 	@Override
@@ -332,11 +333,12 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onDisconnected() {
-		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_LONG);
+		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
 	public void onLocationChanged(Location loc) {
+		if (rebooted) {addBatch(datasource.getAllPositions(),false,true,true);rebooted = false;}
 		if (runAgain){
 			//gotoLocation(loc,true,true,true);
 			gotoLocation(lc.next(),true,true,true);
@@ -344,13 +346,14 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 	}
 
-	public void addBatch(java.util.Collection<Location> list, boolean addDatabase, boolean addMarker, boolean addLine){
-		Iterator<Location> iterator = list.iterator();
+	public void addBatch(java.util.Collection<? extends Location> list, boolean addDatabase, boolean addMarker, boolean addLine){
+		Log.w("drawMap","made it to addBatch");
+		Iterator<? extends Location> iterator = list.iterator();
 		moveCamera = false;
 		while (iterator.hasNext()){
 			gotoLocation(iterator.next(),addDatabase,addMarker,addLine);
 		}
 		moveCamera = true;
-		gotoLocation(listLocation.getLast(),false,false,false);
+		if (listLocation.size() > 0) gotoLocation(listLocation.getLast(),false,false,false);
 	}
 }

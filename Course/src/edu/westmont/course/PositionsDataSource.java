@@ -2,6 +2,7 @@
 package edu.westmont.course;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +24,8 @@ public class PositionsDataSource {
   private SQLiteDatabase database;
   private MySQLiteHelper dbHelper;
   private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
-      MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE, MySQLiteHelper.COLUMN_HEIGHT};
+      MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE,
+      MySQLiteHelper.COLUMN_HEIGHT,MySQLiteHelper.COLUMN_TIME};
 
   public PositionsDataSource(Context context) {
     dbHelper = new MySQLiteHelper(context);
@@ -42,6 +44,7 @@ public class PositionsDataSource {
     values.put(MySQLiteHelper.COLUMN_LATITUDE, loc.getLatitude());
     values.put(MySQLiteHelper.COLUMN_LONGITUDE, loc.getLongitude());
     values.put(MySQLiteHelper.COLUMN_HEIGHT, loc.getAltitude());
+    values.put(MySQLiteHelper.COLUMN_TIME, loc.getTime());
     long insertId = database.insert(run, null,
         values);
     Cursor cursor = database.query(run,
@@ -67,10 +70,10 @@ public class PositionsDataSource {
   
   //set the run name prior to calling this method.
   public void makeRun(){
-	  if(!tableContains(run)) dbHelper.createTable(database,run);
+	  if(!containsTable(run)) dbHelper.createTable(database,run);
   }
   
-  public boolean tableContains(String tablename){
+  public boolean containsTable(String tablename){
 	  Cursor cursor = dbHelper.showAllTables(database);
 	    if (cursor.moveToFirst()){
 	    	do{
@@ -91,11 +94,11 @@ public class PositionsDataSource {
 	    }
   }
 
-  //TODO get this to work with multiple tables.
+  //gets all positions from the current runs table
   public List<Position> getAllPositions() {
     List<Position> positions = new ArrayList<Position>();
 
-    Cursor cursor = database.query(MySQLiteHelper.TABLE_POSITIONS,
+    Cursor cursor = database.query(run,
         allColumns, null, null, null, null, null);
 
     cursor.moveToFirst();
@@ -106,19 +109,25 @@ public class PositionsDataSource {
     }
     // make sure to close the cursor
     cursor.close();
+    Log.w("dataSource","finished with getting all positions");
     return positions;
   }
 
   private Position cursorToPosition(Cursor cursor) {
-    Position position = new Position();
+    Position position = new Position("database");
     position.setId(cursor.getLong(0));
-    position.setll(new LatLng(cursor.getDouble(1),cursor.getDouble(2)));
-    position.setHeight(cursor.getDouble(3));
+    Log.w("PositionsDataSouce","The id is: " + position.getId());
+    position.setLatitude(cursor.getDouble(1));
+    position.setLongitude(cursor.getDouble(2));
+    position.setAltitude(cursor.getDouble(3));
+    position.setTime(cursor.getLong(4));
+    position.setAccuracy(99); //arbitrary number for accuracy. I think I can get away with not storing accuracy.
     return position;
   }
   
   private String sanitizeInput(String runName){
 	  runName = runName.trim();
+	  //replaces anything that is not a letter or a number with an underscore.
 	  runName = runName.replaceAll("[^[a-zA-Z_0-9]]", "_");
 	  return runName;
   }

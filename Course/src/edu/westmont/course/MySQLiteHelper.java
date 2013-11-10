@@ -14,15 +14,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_LATITUDE = "latitude";
   public static final String COLUMN_LONGITUDE = "longitude";
   public static final String COLUMN_HEIGHT = "height";
+  public static final String COLUMN_TIME = "time";
 
   private static final String DATABASE_NAME = "positions.db";
-  private static final int DATABASE_VERSION = 6;
+  private static final int DATABASE_VERSION = 7;
 
   // Table creation sql statement
   private static final String TABLE_CREATE = "(" + COLUMN_ID
 	      + " integer primary key autoincrement, " + COLUMN_LATITUDE
 	      + " text not null, " + COLUMN_LONGITUDE + " text not null, "
-	      + COLUMN_HEIGHT + " text not null);";
+	      + COLUMN_HEIGHT + " text not null, " + COLUMN_TIME + ");";
 
   public MySQLiteHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
