@@ -162,6 +162,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		super.onStop();
 		MapStateManager mgr = new MapStateManager(this);
 		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain);
+		myLocationClient.disconnect();
 	}
 
 	@Override
