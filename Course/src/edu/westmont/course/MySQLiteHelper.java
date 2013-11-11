@@ -15,15 +15,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_LONGITUDE = "longitude";
   public static final String COLUMN_HEIGHT = "height";
   public static final String COLUMN_TIME = "time";
+  public static final String COLUMN_SPEED = "speed";
+  
+  public static final String TABLE_STATS ="run_statistics";
+  public static final String COLUMN_RUN = "run";
+  public static final String COLUMN_HIGHEST_SPEED = "speed";
+  public static final String COLUMN_BEST_TIME = "time";
+  public static final String COLUMN_HIGHEST_ALTITUDE = "altitude";
 
   private static final String DATABASE_NAME = "positions.db";
-  private static final int DATABASE_VERSION = 7;
+  private static final int DATABASE_VERSION = 9;
 
   // Table creation sql statement
   private static final String TABLE_CREATE = "(" + COLUMN_ID
 	      + " integer primary key autoincrement, " + COLUMN_LATITUDE
 	      + " text not null, " + COLUMN_LONGITUDE + " text not null, "
-	      + COLUMN_HEIGHT + " text not null, " + COLUMN_TIME + ");";
+	      + COLUMN_HEIGHT + " text not null, " + COLUMN_TIME + ", " + COLUMN_SPEED + ");";
 
   public MySQLiteHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,7 +38,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase database) {
-
+	  database.execSQL("create table " + TABLE_STATS + "(" + COLUMN_RUN + ", " + COLUMN_HIGHEST_SPEED
+			  + ", " + COLUMN_BEST_TIME + ", " + COLUMN_HIGHEST_ALTITUDE + ");");
   }
 
   @Override

@@ -7,10 +7,13 @@ import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 
 public class LocationChanger implements Iterator<Location> {
+	
+	public static final float NORMALIZER = 0.001f;
 
-	private double latitude = 90-(Math.random()*180);;
+	private double latitude = 90-(Math.random()*180);
 	private double longitude = 180-(Math.random()*360);
 	private double altitude = 100;
+	private float speed = 0;
 	private float accuracy = 10;
 	private Integer nameInt = 1;
 	private String provider = "mockLocationGenerator";
@@ -51,12 +54,14 @@ public class LocationChanger implements Iterator<Location> {
 		loc.setLongitude(longitude);
 		loc.setLatitude(latitude);
 		loc.setAltitude(altitude);
+		loc.setSpeed(speed);
 		loc.setAccuracy(accuracy);
 		loc.setTime(System.currentTimeMillis());
 		nameInt++;
 		altitude += 2-(Math.random()*4);
-		longitude += 1-(2*Math.random());
-		latitude += 1-(2*Math.random());
+		longitude += (1-(2*Math.random())) * NORMALIZER;
+		latitude += (1-(2*Math.random())) * NORMALIZER;
+		speed = (float) (100 - (Math.random() * 100));
 		if ((latitude >= 90) || (latitude <= -90)) latitude = 0;
 		if ((longitude >= 180) || (longitude <= -180)) longitude = 0;
 		return loc;

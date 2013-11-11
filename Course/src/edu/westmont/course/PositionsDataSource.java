@@ -25,7 +25,7 @@ public class PositionsDataSource {
   private MySQLiteHelper dbHelper;
   private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
       MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE,
-      MySQLiteHelper.COLUMN_HEIGHT,MySQLiteHelper.COLUMN_TIME};
+      MySQLiteHelper.COLUMN_HEIGHT,MySQLiteHelper.COLUMN_TIME,MySQLiteHelper.COLUMN_SPEED};
 
   public PositionsDataSource(Context context) {
     dbHelper = new MySQLiteHelper(context);
@@ -45,6 +45,7 @@ public class PositionsDataSource {
     values.put(MySQLiteHelper.COLUMN_LONGITUDE, loc.getLongitude());
     values.put(MySQLiteHelper.COLUMN_HEIGHT, loc.getAltitude());
     values.put(MySQLiteHelper.COLUMN_TIME, loc.getTime());
+    values.put(MySQLiteHelper.COLUMN_SPEED, loc.getSpeed());
     long insertId = database.insert(run, null,
         values);
     Cursor cursor = database.query(run,
@@ -116,12 +117,14 @@ public class PositionsDataSource {
   private Position cursorToPosition(Cursor cursor) {
     Position position = new Position("database");
     position.setId(cursor.getLong(0));
-    Log.w("PositionsDataSouce","The id is: " + position.getId());
+    
     position.setLatitude(cursor.getDouble(1));
     position.setLongitude(cursor.getDouble(2));
     position.setAltitude(cursor.getDouble(3));
     position.setTime(cursor.getLong(4));
+    position.setSpeed(cursor.getFloat(5));
     position.setAccuracy(99); //arbitrary number for accuracy. I think I can get away with not storing accuracy.
+    Log.w("PositionsDataSouce","The speed is: " + position.getSpeed());
     return position;
   }
   
@@ -132,5 +135,47 @@ public class PositionsDataSource {
 	  //replaces anything that is not a letter or a number with an underscore.
 	  runName = runName.replaceAll("[^[a-zA-Z_0-9]]", "_");
 	  return runName;
+  }
+  //adds the data from the current run to the Stats table
+  private void addDataToStatistics(){
+	  long time = 0;
+	  double altitude = 0;
+	  float speed = 0;
+	  ContentValues values = new ContentValues();
+	  Cursor cursor = database.query(run, allColumns, null, null, null, null, null);
+	  cursor.moveToFirst();
+	  while (!cursor.isAfterLast()) {
+		  if (cursor.isFirst()) time = cursor.getLong(4);
+		  if (altitude < cursor.getDouble(3)) altitude = cursor.getDouble(3);
+		  if (speed < cursor.getFloat(5)) speed = cursor.getFloat(5);
+		  if (cursor.isLast()) time = cursor.getLong(4) - time;
+		  cursor.moveToNext();
+	  }
+	  cursor.close();
+	  
+	  values.put(MySQLiteHelper.COLUMN_RUN, run);
+	  values.put(MySQLiteHelper.COLUMN_HIGHEST_SPEED, speed);
+	  values.put(MySQLiteHelper.COLUMN_BEST_TIME, time);
+	  values.put(MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE, altitude);
+	  database.insert(MySQLiteHelper.TABLE_STATS, null, values);
+	  Log.w("PositionsDataSource","highest speed: "+ speed + ". time: " + time / 1000 + " seconds. highest altitude: " + altitude);
+  }
+  //deletes all entries without deleting the table.
+  public void deleteAllEntries(){
+	  Cursor cursor = database.query(run, allColumns, null, null, null, null, null);
+	  cursor.moveToFirst();
+	  while (!cursor.isAfterLast()){
+		  database.delete(run, MySQLiteHelper.COLUMN_ID + "=" + cursor.getLong(0), null);
+		  cursor.moveToNext();
+	  }
+	  cursor.close();
+  }
+  
+  public void done(){
+	  //add best time, speed, and altitude to statistics table
+	  addDataToStatistics();
+	  //delete data from current run table
+	  //deleteAllEntries();
+	  close(); //Maybe?
   }
 } 

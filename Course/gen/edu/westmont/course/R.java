@@ -187,51 +187,55 @@ containing a value of this type.
         public static final int ic_plusone_tall_off_client=0x7f02001d;
     }
     public static final class id {
-        public static final int TextView01=0x7f060009;
-        public static final int TextView02=0x7f06000a;
-        public static final int TextView03=0x7f06000c;
-        public static final int TextView04=0x7f06000d;
-        public static final int action_home=0x7f060017;
-        public static final int action_settings=0x7f060015;
+        public static final int TextView01=0x7f06000a;
+        public static final int TextView02=0x7f06000b;
+        public static final int TextView03=0x7f06000d;
+        public static final int TextView04=0x7f06000e;
+        public static final int action_home=0x7f060018;
+        public static final int action_settings=0x7f060016;
+        public static final int doneButton=0x7f060021;
+        public static final int graph=0x7f060008;
         public static final int hybrid=0x7f060004;
-        public static final int imageView1=0x7f06000e;
-        public static final int item1=0x7f060016;
-        public static final int linearLayout1=0x7f060008;
-        public static final int linearLayout2=0x7f06000b;
+        public static final int imageView1=0x7f06000f;
+        public static final int item1=0x7f060017;
+        public static final int linearLayout1=0x7f060009;
+        public static final int linearLayout2=0x7f06000c;
         public static final int map=0x7f060007;
-        public static final int mapTypeHybrid=0x7f06001f;
-        public static final int mapTypeNormal=0x7f06001c;
-        public static final int mapTypeSatellite=0x7f06001d;
-        public static final int mapTypeTerrain=0x7f06001e;
+        public static final int mapTypeHybrid=0x7f060020;
+        public static final int mapTypeNormal=0x7f06001d;
+        public static final int mapTypeSatellite=0x7f06001e;
+        public static final int mapTypeTerrain=0x7f06001f;
         public static final int none=0x7f060000;
         public static final int normal=0x7f060001;
-        public static final int resetButton=0x7f060019;
+        public static final int resetButton=0x7f06001a;
         public static final int satellite=0x7f060002;
-        public static final int showCurrentLocation=0x7f06001a;
+        public static final int showCurrentLocation=0x7f06001b;
         public static final int start_run=0x7f060006;
-        public static final int stopButton=0x7f060018;
+        public static final int stopButton=0x7f060019;
         public static final int terrain=0x7f060003;
         public static final int textView1=0x7f060005;
-        public static final int tv_text1=0x7f060010;
-        public static final int tv_text2=0x7f060011;
-        public static final int tv_text3=0x7f060012;
-        public static final int tv_text4=0x7f060013;
-        public static final int tv_text5=0x7f060014;
-        public static final int tv_title=0x7f06000f;
-        public static final int updateMapCamera=0x7f06001b;
+        public static final int tv_text1=0x7f060011;
+        public static final int tv_text2=0x7f060012;
+        public static final int tv_text3=0x7f060013;
+        public static final int tv_text4=0x7f060014;
+        public static final int tv_text5=0x7f060015;
+        public static final int tv_title=0x7f060010;
+        public static final int updateMapCamera=0x7f06001c;
     }
     public static final class layout {
         public static final int activity_draw_map=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int activity_map=0x7f030002;
-        public static final int activity_show_location=0x7f030003;
-        public static final int info_window=0x7f030004;
+        public static final int activity_run_statistics=0x7f030003;
+        public static final int activity_show_location=0x7f030004;
+        public static final int info_window=0x7f030005;
     }
     public static final class menu {
         public static final int draw_map=0x7f0a0000;
         public static final int main=0x7f0a0001;
         public static final int map_menu=0x7f0a0002;
-        public static final int show_location=0x7f0a0003;
+        public static final int run_statistics=0x7f0a0003;
+        public static final int show_location=0x7f0a0004;
     }
     public static final class raw {
         public static final int ormlite_config=0x7f040000;
@@ -265,6 +269,9 @@ containing a value of this type.
         public static final int auth_client_using_bad_version_title=0x7f070013;
         public static final int button_draw_map=0x7f07002a;
         public static final int button_get_location=0x7f07001e;
+        public static final int button_graph_altitude=0x7f070031;
+        public static final int button_graph_speed=0x7f070032;
+        public static final int button_show_stats=0x7f070033;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -333,6 +340,7 @@ containing a value of this type.
          */
         public static final int common_signin_button_text_long=0x7f070012;
         public static final int enter_run_name=0x7f070029;
+        public static final int finished=0x7f07002f;
         public static final int fly_to=0x7f070024;
         public static final int google_play_error_message=0x7f07001f;
         public static final int hello_world=0x7f07001b;
@@ -348,6 +356,7 @@ containing a value of this type.
         public static final int stay_put=0x7f070025;
         public static final int stop=0x7f07002c;
         public static final int title_activity_draw_map=0x7f070028;
+        public static final int title_activity_run_statistics=0x7f070030;
         public static final int title_activity_show_location=0x7f07001d;
     }
     public static final class style {

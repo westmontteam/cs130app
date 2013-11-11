@@ -146,6 +146,11 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		case R.id.mapTypeTerrain:
 			changeMapType(GoogleMap.MAP_TYPE_TERRAIN);
 			break;
+		case R.id.doneButton:
+			datasource.done();
+			runAgain = false;
+			startRunStatistics();
+			break;
 		default:
 			break;
 		}
@@ -356,5 +361,10 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 		moveCamera = true;
 		if (listLocation.size() > 0) gotoLocation(listLocation.getLast(),false,false,false);
+	}
+	public void startRunStatistics(){
+		Intent intent = new Intent(this,RunStatistics.class);
+		intent.putExtra(MainActivity.RUN_NAME, userDefinedName);
+		startActivity(intent);
 	}
 }
