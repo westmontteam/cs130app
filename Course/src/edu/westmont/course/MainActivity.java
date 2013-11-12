@@ -33,7 +33,8 @@ public class MainActivity extends Activity implements OnClickListener {
     
     public void openMap(View view){
     	//in response to a button
-    	Intent intent = new Intent(this, DrawMap.class);
+    	//Intent intent = new Intent(this, DrawMap.class);
+    	Intent intent = new Intent(this, List_Activity.class);
     	EditText editText = (EditText) findViewById(R.id.start_run);
     	String runName = editText.getText().toString();
     	intent.putExtra(RUN_NAME, runName);
