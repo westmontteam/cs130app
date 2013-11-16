@@ -16,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -40,7 +41,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	private static final int GPS_ERRORDIALOG_REQUEST = 0;
 	GoogleMap myMap;
 	protected LocationClient myLocationClient;
-	protected int defaultZoom = 14;
+	protected int defaultZoom = 15;
 	protected boolean useDefaultZoom = true;
 	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
 	protected DistanceFinder ranger = new DistanceFinder();
@@ -284,6 +285,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected void addLatLngToMap(LatLng ll){
 		MarkerOptions options = new MarkerOptions()
 		.title(ranger.getNameInt())
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location))
+		.anchor(.5f,.5f)
 		.position(ll);
 		listMarker.add(myMap.addMarker(options));
 	}
