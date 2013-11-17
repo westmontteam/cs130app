@@ -19,6 +19,10 @@ public class DistanceFinder {
 	private String[] lastString = new String[5];
 	private int nameInt = 0;
 
+	public DistanceFinder(boolean useMetricboolean){
+		useMetric = useMetricboolean;
+	}
+	
 	public String getNameInt(){
 		return String.valueOf(nameInt);
 	}

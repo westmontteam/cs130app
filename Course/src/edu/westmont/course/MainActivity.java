@@ -15,7 +15,7 @@ import android.widget.Button;
 public class MainActivity extends Activity implements OnClickListener {
 	
 	public final static String RUN_NAME = "edu.westmont.course.MESSAGE";
-	
+	public final static String USE_METRIC = "edu.westmont.course.MEASUREMENT";
   
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -19,7 +19,11 @@ public class RunStatistics extends Activity {
 
 	private String runName="";
 	private PositionsDataSource datasource;
-
+	private boolean useMetric = false;
+	final private double metersToMph = 2.236936364;
+	final private double metersToKph = 3.6;
+	private String yLabel = "";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,6 +31,7 @@ public class RunStatistics extends Activity {
 
 		Intent intent = getIntent();
 		runName = intent.getStringExtra(MainActivity.RUN_NAME);
+		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
 		datasource = new PositionsDataSource(this);
 		datasource.setRunName(runName);
 		datasource.open();
@@ -38,9 +43,24 @@ public class RunStatistics extends Activity {
 		getMenuInflater().inflate(R.menu.run_statistics, menu);
 		return true;
 	}
+	
+	private double convertSpeed(double value){
+		if (useMetric){
+			return value*metersToKph;
+		}
+		return value*metersToMph;
+	}
 
 	private void displayGraph(String type){
 		int i;
+		if (type.equals("Altitude")) {
+			if (useMetric) yLabel = " (meters)";
+			if (!useMetric) yLabel = " (feet)";
+		}
+		if (type.equals("Speed")) {
+			if (useMetric) yLabel = " (kph)";
+			if (!useMetric) yLabel = " (mph)";
+		}
 		double x,y=0;
 		long startTime;
 		List<Position> positions = datasource.getAllPositions();
@@ -57,15 +77,17 @@ public class RunStatistics extends Activity {
 		}
 		Log.w("RunStatistics","Made it past the point initialization. There are: " + points.length + " points");
 		GraphViewSeries exampleSeries = new GraphViewSeries(points);
-		GraphView graphView = new LineGraphView(this,type);
-		graphView.addSeries(exampleSeries); // data  
+		GraphView graphView = new LineGraphView(this,type+yLabel);
 		//graphView.setPadding(50, 50, 50, 50);
 		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
 			public String formatLabel(double value, boolean isValueX) {
-				if (!isValueX) return "" + (int) value;
+				if (!isValueX) {
+					return ""+(int) convertSpeed(value);
+				}
 				return null; // let graphview generate X-axis label for us
 			}
 		});
+		graphView.addSeries(exampleSeries); // data  
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
 		graphView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 		layout.addView(graphView, 1);

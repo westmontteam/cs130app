@@ -4,8 +4,6 @@ package edu.westmont.course;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -44,7 +42,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected int defaultZoom = 15;
 	protected boolean useDefaultZoom = true;
 	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
-	protected DistanceFinder ranger = new DistanceFinder();
+	protected boolean useMetric = false;
+	protected DistanceFinder ranger = new DistanceFinder(useMetric);
 	protected String userDefinedName = "";
 	protected LinkedList<Location> listLocation = new LinkedList<Location>();
 	protected LinkedList<Marker> listMarker = new LinkedList<Marker>();
@@ -167,7 +166,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected void onStop() {
 		super.onStop();
 		MapStateManager mgr = new MapStateManager(this);
-		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain);
+		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain, useMetric);
 		myLocationClient.disconnect();
 	}
 
@@ -179,6 +178,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			showCurrentLocation = mgr.getShowCurrentPosition();
 			moveCamera = mgr.getMoveCamera();
 			runAgain = mgr.getRunState();
+			useMetric = mgr.getUseMetric();
 			changeMapType(mgr.getMapType());
 		}
 	}
@@ -320,7 +320,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 		if (resetLocations){
 			listLocation = new LinkedList<Location>();
-			ranger = new DistanceFinder();
+			ranger = new DistanceFinder(useMetric);
 			MarkerStrings = new LinkedList<String[]>();
 			boundsBuilder = LatLngBounds.builder();
 		}
@@ -368,6 +368,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	public void startRunStatistics(){
 		Intent intent = new Intent(this,RunStatistics.class);
 		intent.putExtra(MainActivity.RUN_NAME, userDefinedName);
+		intent.putExtra(MainActivity.USE_METRIC, useMetric);
 		startActivity(intent);
 	}
 }
