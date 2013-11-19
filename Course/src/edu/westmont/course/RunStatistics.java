@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TableLayout.LayoutParams;
+import android.widget.TextView;
 
 public class RunStatistics extends Activity {
 	
@@ -30,6 +31,7 @@ public class RunStatistics extends Activity {
 		datasource = new PositionsDataSource(this);
 		datasource.setRunName(runName);
 		datasource.open();
+		
 	}
 
 	@Override
@@ -61,8 +63,27 @@ public class RunStatistics extends Activity {
 		graphView.addSeries(exampleSeries); // data  
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
 		graphView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		layout.removeViewAt(1);
 		layout.addView(graphView, 1);
-		
+	}
+	
+	public void showStats(View view){
+		StringBuilder message = new StringBuilder();
+		Log.w("RunStatistics","Displaying Statistics");
+		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
+		//TextView textView = (TextView) findViewById(R.id.stats);
+		Log.w("Stats","Constructing TextView");
+		TextView textView = new TextView(getBaseContext());
+		message.append("Total time: " + datasource.totalTime(runName).toString() + "seconds. \n");
+		message.append("Highest speed: " + Math.round(datasource.highest(runName,MySQLiteHelper.COLUMN_SPEED)) + "m/s \n");
+		message.append("Highest Altitude: " + Math.round(datasource.highest(runName, MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) + "meters. \n");
+		message.append("Total distance: " + Math.round(datasource.totalDistance(runName)) + "meters. \n");
+		message.append("Average speed: " + Math.round(datasource.averageSpeed(runName)) + "m/s.");
+		Log.w("Stats","setting Text.");
+		textView.setText(message.toString(), null);
+		Log.w("Stats","adding view");
+		layout.removeViewAt(1);
+		layout.addView(textView,1);
 	}
 	
 	public void graphAltitude(View view){
@@ -74,5 +95,18 @@ public class RunStatistics extends Activity {
 		Log.w("Run Statistics","Graphing Speed");
 		displayGraph("Speed");
 	}
+	
+	public void showOlderTimes(View view){
+		Log.w("Run Statistics","Displaying previous times");
+		Point[] points = datasource.timeVsNumber(runName);
+		GraphViewSeries exampleSeries = new GraphViewSeries(points);
+		GraphView graphView = new LineGraphView(this,"Previous Times");
+		graphView.addSeries(exampleSeries); // data  
+		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
+		graphView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+		layout.removeViewAt(1);
+		layout.addView(graphView, 1);
+	}
+	
 
 }

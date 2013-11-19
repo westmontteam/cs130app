@@ -28,5 +28,7 @@
     <string name="button_graph_altitude">Altitude</string>
     <string name="button_graph_speed">Speed</string>
     <string name="button_show_stats">Statistics</string>
+    <string name="show_stats">Statistics</string>
+    <string name="show_older_times">Previous Times</string>
 
 </resources>
