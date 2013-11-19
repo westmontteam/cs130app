@@ -22,9 +22,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_HIGHEST_SPEED = "speed";
   public static final String COLUMN_BEST_TIME = "time";
   public static final String COLUMN_HIGHEST_ALTITUDE = "altitude";
+  public static final String COLUMN_DATE = "date";
 
   private static final String DATABASE_NAME = "positions.db";
-  private static final int DATABASE_VERSION = 9;
+  private static final int DATABASE_VERSION = 11;
 
   // Table creation sql statement
   private static final String TABLE_CREATE = "(" + COLUMN_ID
@@ -39,7 +40,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   @Override
   public void onCreate(SQLiteDatabase database) {
 	  database.execSQL("create table " + TABLE_STATS + "(" + COLUMN_RUN + ", " + COLUMN_HIGHEST_SPEED
-			  + ", " + COLUMN_BEST_TIME + ", " + COLUMN_HIGHEST_ALTITUDE + ");");
+			  + ", " + COLUMN_BEST_TIME + ", " + COLUMN_HIGHEST_ALTITUDE + ", " + COLUMN_DATE + ");");
   }
 
   @Override

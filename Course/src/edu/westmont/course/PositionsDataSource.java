@@ -3,6 +3,7 @@ package edu.westmont.course;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -138,7 +139,7 @@ public class PositionsDataSource {
   }
   //adds the data from the current run to the Stats table
   private void addDataToStatistics(){
-	  long time = 0;
+	  long time = 0, date = 0;
 	  double altitude = 0;
 	  float speed = 0;
 	  ContentValues values = new ContentValues();
@@ -148,7 +149,7 @@ public class PositionsDataSource {
 		  if (cursor.isFirst()) time = cursor.getLong(4);
 		  if (altitude < cursor.getDouble(3)) altitude = cursor.getDouble(3);
 		  if (speed < cursor.getFloat(5)) speed = cursor.getFloat(5);
-		  if (cursor.isLast()) time = cursor.getLong(4) - time;
+		  if (cursor.isLast()) {time = cursor.getLong(4) - time; date = cursor.getLong(4);}
 		  cursor.moveToNext();
 	  }
 	  cursor.close();
@@ -157,6 +158,7 @@ public class PositionsDataSource {
 	  values.put(MySQLiteHelper.COLUMN_HIGHEST_SPEED, speed);
 	  values.put(MySQLiteHelper.COLUMN_BEST_TIME, time);
 	  values.put(MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE, altitude);
+	  values.put(MySQLiteHelper.COLUMN_DATE, date);
 	  database.insert(MySQLiteHelper.TABLE_STATS, null, values);
 	  Log.w("PositionsDataSource","highest speed: "+ speed + ". time: " + time / 1000 + " seconds. highest altitude: " + altitude);
   }
@@ -170,6 +172,64 @@ public class PositionsDataSource {
 	  }
 	  cursor.close();
   }
+  //total time in Seconds
+  public Long totalTime(String runName){
+	 Long time;
+	 String[] column = {MySQLiteHelper.COLUMN_TIME};
+	 Cursor cursor = database.query(runName, column, null, null, null, null, null);
+	 cursor.moveToFirst();
+	 time = cursor.getLong(0);
+	 cursor.moveToLast();
+	 time = cursor.getLong(0) - time;
+	 time = time / 1000; //convert to seconds.
+	 cursor.close();
+	 return time;
+  }
+  
+  public double highest(String runName,String column){
+	  String[] columns = {column, MySQLiteHelper.COLUMN_DATE};
+	  double spdOrAlt;
+	  Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, columns , MySQLiteHelper.COLUMN_RUN + "=" + "'"+runName+"'", 
+			  null, null, null, null);
+	  cursor.moveToLast();
+	  spdOrAlt = cursor.getDouble(0);
+	  cursor.close();
+	  Log.w("PositionsDataSource", "highest Speed is: " + spdOrAlt);
+	  return spdOrAlt;
+  }
+  
+  public double totalDistance(String runName){
+	 List<Position> positions = getAllPositions();
+	 Position position;
+	 double totalDistance = 0;
+	 int i;
+	 for (i=0;i<positions.size()-1;i++){
+		 position = positions.get(i);
+		 totalDistance += position.distanceTo(positions.get(i+1));
+	 }
+	 return totalDistance;
+  }
+  
+  public double averageSpeed(String runName){
+	  return totalDistance(runName) / totalTime(runName);
+  }
+  
+  public Point[] timeVsNumber(String runName){
+	  Point[] points;
+	  int i;
+	  String[] columns = {MySQLiteHelper.COLUMN_BEST_TIME};
+	  Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, columns , MySQLiteHelper.COLUMN_RUN + "=" + "'"+runName+"'", 
+			  null, null, null, null);
+	  cursor.moveToFirst();
+	  Log.w("PositionsDataSource","cursor count is: " + cursor.getCount());
+	  points = new Point[cursor.getCount()];
+	  for (i=0;i<cursor.getCount();i++){
+		  points[i] = new Point(i,cursor.getLong(0) / 1000);
+	  }
+	  cursor.close();
+	  return points;
+  }
+  
   
   public void done(){
 	  //add best time, speed, and altitude to statistics table
