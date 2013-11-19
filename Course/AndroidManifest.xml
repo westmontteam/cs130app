@@ -48,6 +48,15 @@
                 android:value="edu.westmont.course.MainActivity" />
         </activity>
 
+        <activity
+            android:name="edu.westmont.course.GPLicense"
+            android:label="@string/gp_license"
+            android:parentActivityName="edu.westmont.course.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.westmont.course.MainActivity" />
+        </activity>
+        
         <!-- CREDIT TO http://www.vogella.com for some of this activity code -->
         <activity
             android:name="edu.westmont.course.ShowLocationActivity"
