@@ -38,9 +38,21 @@ public class MainActivity extends Activity implements OnClickListener {
 		Intent intent = new Intent(this, List_Activity.class);
 		EditText editText = (EditText) findViewById(R.id.start_run);
 		String runName = editText.getText().toString();
+		runName = sanitizeInput(runName);
 		intent.putExtra(RUN_NAME, runName);
 		startActivity(intent);
 	}
+	
+	  public String sanitizeInput(String runName){
+		  runName = runName.trim();
+		  
+		  //if the first thing in the string is a number, this replaces it with an _. (SQLite can't handle numbers first) 
+		  if (runName.substring(0, 1).matches("[0-9]")) runName = "_" + runName.substring(1);
+		  
+		  //replaces anything that is not a letter or a number with an underscore.
+		  runName = runName.replaceAll("[^[a-zA-Z_0-9]]", "_");
+		  return runName;
+	  }
 
 	public void exitApp(MenuItem item) {
 		System.exit(0);

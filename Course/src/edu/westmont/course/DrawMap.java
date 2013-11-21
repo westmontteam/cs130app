@@ -42,7 +42,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected int defaultZoom = 15;
 	protected boolean useDefaultZoom = true;
 	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
-	protected boolean useMetric = false;
+	protected boolean useMetric = true;
 	protected DistanceFinder ranger = new DistanceFinder(useMetric);
 	protected String userDefinedName = "";
 	protected LinkedList<Location> listLocation = new LinkedList<Location>();
@@ -83,7 +83,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		datasource = new PositionsDataSource(this);
 		datasource.open();
 		datasource.setRunName(userDefinedName);
-		datasource.makeRun();
+		//datasource.makeRun();
 		datasource.displayAllTables();//to the Log
 	}
 
@@ -147,7 +147,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			changeMapType(GoogleMap.MAP_TYPE_TERRAIN);
 			break;
 		case R.id.doneButton:
-			datasource.done();
+			datasource.done(userDefinedName);
 			runAgain = false;
 			startRunStatistics();
 			break;
@@ -260,7 +260,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 				listLocation.add(loc);
 				ranger.addDistanceToLocation(loc);
 			}
-			if (includeDatabase) datasource.createPosition(loc);
+			if (includeDatabase) datasource.createPosition(loc,userDefinedName);
 			if (addMarker) {
 				MarkerStrings.add(ranger.getLastString());
 				addLatLngToMap(ll);
@@ -347,7 +347,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onLocationChanged(Location loc) {
-		if (rebooted) {addBatch(datasource.getAllPositions(),false,true,true);rebooted = false;}
+		if (rebooted) {addBatch(datasource.getAllPositions(userDefinedName),false,true,true);rebooted = false;}
 		if (runAgain){
 			//gotoLocation(loc,true,true,true);
 			gotoLocation(lc.next(),true,true,true);

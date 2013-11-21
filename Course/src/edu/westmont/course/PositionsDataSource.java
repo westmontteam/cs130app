@@ -40,22 +40,17 @@ public class PositionsDataSource {
     dbHelper.close();
   }
 
-  public Position createPosition(Location loc) {
+  public void createPosition(Location loc,String runName) {
+	  int id = getLastID(runName);
+	  
     ContentValues values = new ContentValues();
+    values.put(MySQLiteHelper.COLUMN_ID,id);
     values.put(MySQLiteHelper.COLUMN_LATITUDE, loc.getLatitude());
     values.put(MySQLiteHelper.COLUMN_LONGITUDE, loc.getLongitude());
     values.put(MySQLiteHelper.COLUMN_HEIGHT, loc.getAltitude());
     values.put(MySQLiteHelper.COLUMN_TIME, loc.getTime());
     values.put(MySQLiteHelper.COLUMN_SPEED, loc.getSpeed());
-    long insertId = database.insert(run, null,
-        values);
-    Cursor cursor = database.query(run,
-        allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
-        null, null, null);
-    cursor.moveToFirst();
-    Position newPosition = cursorToPosition(cursor);
-    cursor.close();
-    return newPosition;
+    database.insert(MySQLiteHelper.TABLE_POSITIONS, null,values);
   }
 
   //TODO fix this to work with multiple tables.
@@ -67,10 +62,17 @@ public class PositionsDataSource {
   }
   
   public void setRunName(String runName){
-	  run = sanitizeInput(runName);
+	  run = runName;
+	  
+	  ContentValues values = new ContentValues();
+	  values.put(MySQLiteHelper.COLUMN_RUN_NAME, runName);
+	  values.put(MySQLiteHelper.COLUMN_RUN_ID, getTableSize(MySQLiteHelper.TABLE_RUNS));
+	  database.insert(MySQLiteHelper.TABLE_RUNS,null,values);
+	  
+	  Log.w("SetRunName","id is: " + getLastID(runName));
   }
   
-  //set the run name prior to calling this method.
+  //TODO delete this if I don't need it after refactoring. //set the run name prior to calling this method.
   public void makeRun(){
 	  if(!containsTable(run)) dbHelper.createTable(database,run);
   }
@@ -97,11 +99,12 @@ public class PositionsDataSource {
   }
 
   //gets all positions from the current runs table
-  public List<Position> getAllPositions() {
+  public List<Position> getAllPositions(String runName) {
     List<Position> positions = new ArrayList<Position>();
+    int id = getLastID(runName);
 
-    Cursor cursor = database.query(run,
-        allColumns, null, null, null, null, null);
+    Cursor cursor = database.query(MySQLiteHelper.TABLE_POSITIONS,
+        allColumns, MySQLiteHelper.COLUMN_ID + "=" + id, null, null, null, null);
 
     cursor.moveToFirst();
     while (!cursor.isAfterLast()) {
@@ -125,25 +128,19 @@ public class PositionsDataSource {
     position.setTime(cursor.getLong(4));
     position.setSpeed(cursor.getFloat(5));
     position.setAccuracy(99); //arbitrary number for accuracy. I think I can get away with not storing accuracy.
-    Log.w("PositionsDataSouce","The speed is: " + position.getSpeed());
     return position;
   }
   
-  private String sanitizeInput(String runName){
-	  runName = runName.trim();
-	  //if the first thing in the string is a number, this replaces it with an _. (SQLite can't handle numbers first) 
-	  if (runName.substring(0, 1).matches("[0-9]")) runName = "_" + runName.substring(1);
-	  //replaces anything that is not a letter or a number with an underscore.
-	  runName = runName.replaceAll("[^[a-zA-Z_0-9]]", "_");
-	  return runName;
-  }
   //adds the data from the current run to the Stats table
-  private void addDataToStatistics(){
+  private void addDataToStatistics(String runName){
+	  int id = getLastID(runName);
 	  long time = 0, date = 0;
 	  double altitude = 0;
 	  float speed = 0;
 	  ContentValues values = new ContentValues();
-	  Cursor cursor = database.query(run, allColumns, null, null, null, null, null);
+	  Cursor cursor = database.query(MySQLiteHelper.TABLE_POSITIONS, allColumns, MySQLiteHelper.COLUMN_ID + "=" + id,
+			  null, null, null, null);
+	  
 	  cursor.moveToFirst();
 	  while (!cursor.isAfterLast()) {
 		  if (cursor.isFirst()) time = cursor.getLong(4);
@@ -162,7 +159,7 @@ public class PositionsDataSource {
 	  database.insert(MySQLiteHelper.TABLE_STATS, null, values);
 	  Log.w("PositionsDataSource","highest speed: "+ speed + ". time: " + time / 1000 + " seconds. highest altitude: " + altitude);
   }
-  //deletes all entries without deleting the table.
+  //TODO update this to work with new positions table. //deletes all entries without deleting the table.
   public void deleteAllEntries(){
 	  Cursor cursor = database.query(run, allColumns, null, null, null, null, null);
 	  cursor.moveToFirst();
@@ -174,14 +171,19 @@ public class PositionsDataSource {
   }
   //total time in Seconds
   public Long totalTime(String runName){
-	 Long time;
+	 int id = getLastID(runName);
+	 Long time = (long) 0;
 	 String[] column = {MySQLiteHelper.COLUMN_TIME};
-	 Cursor cursor = database.query(runName, column, null, null, null, null, null);
-	 cursor.moveToFirst();
-	 time = cursor.getLong(0);
-	 cursor.moveToLast();
-	 time = cursor.getLong(0) - time;
-	 time = time / 1000; //convert to seconds.
+	 Cursor cursor = database.query(MySQLiteHelper.TABLE_POSITIONS, column, MySQLiteHelper.COLUMN_ID + "=" + id,
+			 null, null, null, null);
+	 
+	 if (cursor.getCount() != 0){
+		 cursor.moveToFirst();
+		 time = cursor.getLong(0);
+		 cursor.moveToLast();
+		 time = cursor.getLong(0) - time;
+		 time = time / 1000; //convert to seconds.
+	 }
 	 cursor.close();
 	 return time;
   }
@@ -189,6 +191,7 @@ public class PositionsDataSource {
   public double highest(String runName,String column){
 	  String[] columns = {column, MySQLiteHelper.COLUMN_DATE};
 	  double spdOrAlt;
+	  Log.w("highest","runName is: " + runName);
 	  Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, columns , MySQLiteHelper.COLUMN_RUN + "=" + "'"+runName+"'", 
 			  null, null, null, null);
 	  cursor.moveToLast();
@@ -199,7 +202,7 @@ public class PositionsDataSource {
   }
   
   public double totalDistance(String runName){
-	 List<Position> positions = getAllPositions();
+	 List<Position> positions = getAllPositions(runName);
 	 Position position;
 	 double totalDistance = 0;
 	 int i;
@@ -225,15 +228,56 @@ public class PositionsDataSource {
 	  points = new Point[cursor.getCount()];
 	  for (i=0;i<cursor.getCount();i++){
 		  points[i] = new Point(i,cursor.getLong(0) / 1000);
+		  cursor.moveToNext();
 	  }
 	  cursor.close();
 	  return points;
   }
   
+  private int getTableSize(String table){
+	 Cursor cursor = database.query(table, null, null, null, null, null, null);
+	 Log.w("getTableSize","table size of " + table + "is: " + cursor.getCount());
+	 return cursor.getCount();
+  }
   
-  public void done(){
+  private int[] getIDs(String runName){
+	  Cursor cursor = database.query(MySQLiteHelper.TABLE_RUNS, null,
+			  MySQLiteHelper.COLUMN_RUN_NAME + "=" + "'"+runName+"'", null, null, null, null);
+	  Log.w("getIDs", "cursor count is: " + cursor.getCount());
+	  int[] ids = new int[cursor.getCount()];
+	  int i;
+	  cursor.moveToFirst();
+	  Log.w("getIDs", "The IDs are: ");
+	  for (i=0;i<cursor.getCount();i++){
+		  ids[i] = cursor.getInt(1);
+		  Log.w("getIDs", "" + ids[i]);
+		  cursor.moveToNext();
+	  }
+	  cursor.close();
+	  return ids;
+  }
+  
+  //returns the highest id with the same run name.
+  private int getLastID(String runName){
+	  return getTableSize(MySQLiteHelper.TABLE_RUNS)-1;
+  }
+  
+  public LinkedList<String> getAllRuns(){
+	  LinkedList<String> runs = new LinkedList<String>();
+	  String[] columns = {MySQLiteHelper.COLUMN_RUN_NAME};
+	  Cursor cursor = database.query(MySQLiteHelper.TABLE_RUNS, columns, 
+			  null, null, null, null, null, null);
+	  cursor.moveToFirst();
+	  while(!cursor.isAfterLast()){
+		  if (!runs.contains(cursor.getString(0))) runs.add(cursor.getString(0));
+		  cursor.moveToNext();
+	  }
+	  return runs;
+  }
+  
+  public void done(String runName){
 	  //add best time, speed, and altitude to statistics table
-	  addDataToStatistics();
+	  addDataToStatistics(runName);
 	  //delete data from current run table
 	  //deleteAllEntries();
 	  close(); //Maybe?

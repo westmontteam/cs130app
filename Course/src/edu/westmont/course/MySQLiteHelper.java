@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
-  public static final String TABLE_POSITIONS = "default";
+  public static final String TABLE_POSITIONS = "positions";
   public static final String COLUMN_ID = "_id";
   public static final String COLUMN_LATITUDE = "latitude";
   public static final String COLUMN_LONGITUDE = "longitude";
@@ -23,13 +23,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_BEST_TIME = "time";
   public static final String COLUMN_HIGHEST_ALTITUDE = "altitude";
   public static final String COLUMN_DATE = "date";
+  
+  public static final String TABLE_RUNS = "runs";
+  public static final String COLUMN_RUN_NAME = "runName";
+  public static final String COLUMN_RUN_ID = "runID";
 
   private static final String DATABASE_NAME = "positions.db";
-  private static final int DATABASE_VERSION = 11;
+  private static final int DATABASE_VERSION = 12;
 
   // Table creation sql statement
   private static final String TABLE_CREATE = "(" + COLUMN_ID
-	      + " integer primary key autoincrement, " + COLUMN_LATITUDE
+	      + ", " + COLUMN_LATITUDE
 	      + " text not null, " + COLUMN_LONGITUDE + " text not null, "
 	      + COLUMN_HEIGHT + " text not null, " + COLUMN_TIME + ", " + COLUMN_SPEED + ");";
 
@@ -39,8 +43,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase database) {
+	  database.execSQL("create table " + TABLE_POSITIONS + TABLE_CREATE);
+	  
 	  database.execSQL("create table " + TABLE_STATS + "(" + COLUMN_RUN + ", " + COLUMN_HIGHEST_SPEED
 			  + ", " + COLUMN_BEST_TIME + ", " + COLUMN_HIGHEST_ALTITUDE + ", " + COLUMN_DATE + ");");
+	  
+	  database.execSQL("create table " + TABLE_RUNS + "(" + COLUMN_RUN_NAME + ", " + COLUMN_RUN_ID + ");");
   }
 
   @Override

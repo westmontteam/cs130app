@@ -12,33 +12,20 @@ import android.widget.Toast;
 
 public class List_Activity extends ListActivity {
 
+	private PositionsDataSource datasource;
 	LinkedList<String> exampleList = new LinkedList<String>();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_menu);
-
-		// populating an example list to import into the list
-		// normally, this list would be populated with data from the database
+		
+		datasource = new PositionsDataSource(this);
+		datasource.open();
+		
 		Intent intent = getIntent();
 		exampleList.add(intent.getStringExtra(MainActivity.RUN_NAME));
-		exampleList.add("this");
-		exampleList.add("is");
-		exampleList.add("an");
-		exampleList.add("example");
-		exampleList.add("of what");
-		exampleList.add("can");
-		exampleList.add("be");
-		exampleList.add("put");
-		exampleList.add("into");
-		exampleList.add("a list.");
-		exampleList.add("Notice");
-		exampleList.add("that");
-		exampleList.add("it");
-		exampleList.add("can");
-		exampleList.add("scroll");
-		exampleList.add("Should we sort it?");
+		exampleList.addAll(datasource.getAllRuns());
 
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, exampleList));
 	}

@@ -34,7 +34,6 @@ public class RunStatistics extends Activity {
 		runName = intent.getStringExtra(MainActivity.RUN_NAME);
 		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
 		datasource = new PositionsDataSource(this);
-		datasource.setRunName(runName);
 		datasource.open();
 		
 	}
@@ -65,7 +64,7 @@ public class RunStatistics extends Activity {
 		}
 		double x,y=0;
 		long startTime;
-		List<Position> positions = datasource.getAllPositions();
+		List<Position> positions = datasource.getAllPositions(runName);
 		if (positions.size()>0){
 			startTime = positions.get(0).getTime();
 		} else startTime = 0;
@@ -102,12 +101,13 @@ public class RunStatistics extends Activity {
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
 		//TextView textView = (TextView) findViewById(R.id.stats);
 		Log.w("Stats","Constructing TextView");
+		Log.w("Stats","run name is: " + runName);
 		TextView textView = new TextView(getBaseContext());
-		message.append("Total time: " + datasource.totalTime(runName).toString() + "seconds. \n");
-		message.append("Highest speed: " + Math.round(datasource.highest(runName,MySQLiteHelper.COLUMN_SPEED)) + "m/s \n");
-		message.append("Highest Altitude: " + Math.round(datasource.highest(runName, MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) + "meters. \n");
-		message.append("Total distance: " + Math.round(datasource.totalDistance(runName)) + "meters. \n");
-		message.append("Average speed: " + Math.round(datasource.averageSpeed(runName)) + "m/s.");
+		message.append("Total time: " + datasource.totalTime(runName).toString() + " seconds. \n");
+		message.append("Highest speed: " + Math.round(datasource.highest(runName,MySQLiteHelper.COLUMN_SPEED)) + " m/s \n");
+		message.append("Highest Altitude: " + Math.round(datasource.highest(runName, MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) + " meters. \n");
+		message.append("Total distance: " + Math.round(datasource.totalDistance(runName)) + " meters. \n");
+		message.append("Average speed: " + Math.round(datasource.averageSpeed(runName)) + " m/s.");
 		Log.w("Stats","setting Text.");
 		textView.setText(message.toString(), null);
 		Log.w("Stats","adding view");
