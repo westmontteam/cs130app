@@ -42,7 +42,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected int defaultZoom = 15;
 	protected boolean useDefaultZoom = true;
 	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
-	protected boolean useMetric = true;
+	protected boolean useMetric = false;
 	protected DistanceFinder ranger = new DistanceFinder(useMetric);
 	protected String userDefinedName = "";
 	protected LinkedList<Location> listLocation = new LinkedList<Location>();
@@ -263,7 +263,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			if (includeDatabase) datasource.createPosition(loc,userDefinedName);
 			if (addMarker) {
 				MarkerStrings.add(ranger.getLastString());
-				addLatLngToMap(ll);
+				addLatLngToMap(ll, listMarker);
 			}
 			if (addLine && listLocation.size() > 1) drawLine(listLocation.get(listLocation.size()-2), listLocation.getLast());
 		}
@@ -282,13 +282,16 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 	}
 
-	protected void addLatLngToMap(LatLng ll){
+	protected void addLatLngToMap(LatLng ll, LinkedList<Marker> list){
 		MarkerOptions options = new MarkerOptions()
 		.title(ranger.getNameInt())
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location))
 		.anchor(.5f,.5f)
 		.position(ll);
-		listMarker.add(myMap.addMarker(options));
+		list.add(myMap.addMarker(options));
+		if (list.size() > 2){
+			list.get(list.size()-2).setVisible(false);
+		}
 	}
 
 	/*

@@ -23,7 +23,6 @@ public class RunStatistics extends Activity {
 	private boolean useMetric = false;
 	final private double metersToMph = 2.236936364;
 	final private double metersToKph = 3.6;
-	private String yLabel = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +52,7 @@ public class RunStatistics extends Activity {
 	}
 
 	private void displayGraph(String type){
+		String yLabel = "";
 		int i;
 		if (type.equals("Altitude")) {
 			if (useMetric) yLabel = " (meters)";
