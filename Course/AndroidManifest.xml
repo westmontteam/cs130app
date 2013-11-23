@@ -47,7 +47,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.westmont.course.MainActivity" />
         </activity>
-
         <activity
             android:name="edu.westmont.course.GPLicense"
             android:label="@string/gp_license"
@@ -56,7 +55,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.westmont.course.MainActivity" />
         </activity>
-        
+
         <!-- CREDIT TO http://www.vogella.com for some of this activity code -->
         <activity
             android:name="edu.westmont.course.ShowLocationActivity"
@@ -68,14 +67,13 @@
         </activity>
         <activity android:name="edu.westmont.course.LocationChanger" />
         <activity android:name="edu.westmont.course.DistanceFinder" />
-
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyA2cRJz9ENzrAe_GEuCqHAWrEQuhUHiTjw" />
-
         <activity
             android:name="edu.westmont.course.RunStatistics"
-            android:label="@string/title_activity_run_statistics" >
+            android:label="@string/title_activity_run_statistics"
+            android:parentActivityName="edu.westmont.course.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.westmont.course.MainActivity" />
         </activity>
         <activity
             android:name="edu.westmont.course.List_Activity"
@@ -91,6 +89,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyA2cRJz9ENzrAe_GEuCqHAWrEQuhUHiTjw" />
     </application>
 
 </manifest>
