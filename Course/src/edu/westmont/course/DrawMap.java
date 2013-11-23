@@ -245,7 +245,6 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		return (myMap != null);
 	}
 
-
 	protected void gotoCurrentLocation(boolean add){
 		Location location = myLocationClient.getLastLocation();
 		if (location == null) Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
@@ -263,9 +262,9 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			if (includeDatabase) datasource.createPosition(loc,userDefinedName);
 			if (addMarker) {
 				MarkerStrings.add(ranger.getLastString());
-				addLatLngToMap(ll, listMarker);
+				addMarkerToMap(ll, listMarker);
 			}
-			if (addLine && listLocation.size() > 1) drawLine(listLocation.get(listLocation.size()-2), listLocation.getLast());
+			if (addLine && listLocation.size() > 1) drawLine(listLocation.get(listLocation.size()-2), listLocation.getLast(), listLine, Color.BLUE);
 		}
 		if (moveCamera){
 			CameraUpdate update;
@@ -282,7 +281,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 	}
 
-	protected void addLatLngToMap(LatLng ll, LinkedList<Marker> list){
+	protected void addMarkerToMap(LatLng ll, LinkedList<Marker> list){
 		MarkerOptions options = new MarkerOptions()
 		.title(ranger.getNameInt())
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location))
@@ -297,13 +296,13 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	/*
 	 * Draw a line on the map between the last two objects on the listLatLng list.
 	 */
-	private void drawLine(Location a, Location b){
+	private void drawLine(Location a, Location b, LinkedList<Polyline> list, int color){
 		PolylineOptions plo = new PolylineOptions()
 		.add(new LatLng(a.getLatitude(), a.getLongitude()))
 		.add(new LatLng(b.getLatitude(), b.getLongitude()))
-		.color(Color.BLUE)
+		.color(color)
 		.width(5);
-		listLine.add(myMap.addPolyline(plo));
+		list.add(myMap.addPolyline(plo));
 	}
 
 	public void resetMap(boolean resetLocations, boolean resetMarkers, boolean resetLines){
@@ -331,7 +330,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0) {
-		// todo: implement this code by checking if it can be resolved.
+		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -345,12 +344,15 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	@Override
 	public void onDisconnected() {
-		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Error connecting to GPS.", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onLocationChanged(Location loc) {
-		if (rebooted) {addBatch(datasource.getAllPositions(userDefinedName),false,true,true);rebooted = false;}
+		if (rebooted) {
+			addBatch(datasource.getAllPositions(userDefinedName),false,true,true);
+			rebooted = false;
+		}
 		if (runAgain){
 			//gotoLocation(loc,true,true,true);
 			gotoLocation(lc.next(),true,true,true);
