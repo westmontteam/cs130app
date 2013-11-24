@@ -29,7 +29,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_RUN_ID = "runID";
 
   private static final String DATABASE_NAME = "positions.db";
-  private static final int DATABASE_VERSION = 12;
+  private static final int DATABASE_VERSION = 13;
 
   // Table creation sql statement
   private static final String TABLE_CREATE = "(" + COLUMN_ID
@@ -48,7 +48,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 	  database.execSQL("create table " + TABLE_STATS + "(" + COLUMN_RUN + ", " + COLUMN_HIGHEST_SPEED
 			  + ", " + COLUMN_BEST_TIME + ", " + COLUMN_HIGHEST_ALTITUDE + ", " + COLUMN_DATE + ");");
 	  
-	  database.execSQL("create table " + TABLE_RUNS + "(" + COLUMN_RUN_NAME + ", " + COLUMN_RUN_ID + ");");
+	  database.execSQL("create table " + TABLE_RUNS + "(" + COLUMN_RUN_NAME + ", " + COLUMN_RUN_ID + "AUTOINCREMENT INTEGER PRIMARY KEY" + ");");
   }
 
   @Override

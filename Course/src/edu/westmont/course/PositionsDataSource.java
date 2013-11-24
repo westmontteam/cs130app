@@ -66,7 +66,8 @@ public class PositionsDataSource {
 	  
 	  ContentValues values = new ContentValues();
 	  values.put(MySQLiteHelper.COLUMN_RUN_NAME, runName);
-	  values.put(MySQLiteHelper.COLUMN_RUN_ID, getTableSize(MySQLiteHelper.TABLE_RUNS));
+	  //values.putNull(MySQLiteHelper.COLUMN_RUN_ID);
+	  //values.put(MySQLiteHelper.COLUMN_RUN_ID, getTableSize(MySQLiteHelper.TABLE_RUNS)); this should be done automatically now?
 	  database.insert(MySQLiteHelper.TABLE_RUNS,null,values);
 	  
 	  Log.w("SetRunName","id is: " + getLastID(runName));
@@ -151,7 +152,7 @@ public class PositionsDataSource {
 	  }
 	  cursor.close();
 	  
-	  values.put(MySQLiteHelper.COLUMN_RUN, run);
+	  values.put(MySQLiteHelper.COLUMN_RUN, runName);
 	  values.put(MySQLiteHelper.COLUMN_HIGHEST_SPEED, speed);
 	  values.put(MySQLiteHelper.COLUMN_BEST_TIME, time);
 	  values.put(MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE, altitude);
@@ -159,16 +160,21 @@ public class PositionsDataSource {
 	  database.insert(MySQLiteHelper.TABLE_STATS, null, values);
 	  Log.w("PositionsDataSource","highest speed: "+ speed + ". time: " + time / 1000 + " seconds. highest altitude: " + altitude);
   }
-  //TODO update this to work with new positions table. //deletes all entries without deleting the table.
-  public void deleteAllEntries(){
-	  Cursor cursor = database.query(run, allColumns, null, null, null, null, null);
-	  cursor.moveToFirst();
-	  while (!cursor.isAfterLast()){
-		  database.delete(run, MySQLiteHelper.COLUMN_ID + "=" + cursor.getLong(0), null);
-		  cursor.moveToNext();
+  
+  public void deleteAllRunEntries(String runName){
+	  int[] runIDs = getIDs(runName);
+	  int i;
+	  
+	  for (i=0;i<runIDs.length;i++){
+	    //delete from positions
+		Log.w("deleteRun","# of rows deleted: " + database.delete(MySQLiteHelper.TABLE_POSITIONS, MySQLiteHelper.COLUMN_ID + "=" + runIDs[i], null));
+		//delete from runs
+		database.delete(MySQLiteHelper.TABLE_RUNS, MySQLiteHelper.COLUMN_RUN_ID + "=" + runIDs[i], null);
 	  }
-	  cursor.close();
+	 //delete from stats
+	  database.delete(MySQLiteHelper.TABLE_STATS, MySQLiteHelper.COLUMN_RUN + "=" + "'"+runName+"'", null);
   }
+	  
   //total time in Seconds
   public Long totalTime(String runName){
 	 int id = getLastID(runName);
@@ -259,7 +265,12 @@ public class PositionsDataSource {
   
   //returns the highest id with the same run name.
   private int getLastID(String runName){
-	  return getTableSize(MySQLiteHelper.TABLE_RUNS)-1;
+	  Cursor cursor = database.query(MySQLiteHelper.TABLE_RUNS, null, null, null, null, null, null);
+	  cursor.moveToLast();
+	  Log.w("get Last ID","Pulling from: " + cursor.getString(0) + " The ID is: " + cursor.getInt(1));
+	  int id = cursor.getInt(1);
+	  cursor.close();
+	  return id;
   }
   
   public LinkedList<String> getAllRuns(){
@@ -278,8 +289,6 @@ public class PositionsDataSource {
   public void done(String runName){
 	  //add best time, speed, and altitude to statistics table
 	  addDataToStatistics(runName);
-	  //delete data from current run table
-	  //deleteAllEntries();
 	  close(); //Maybe?
   }
 } 
