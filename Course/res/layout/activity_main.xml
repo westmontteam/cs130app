@@ -2,30 +2,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity"
-    android:orientation="horizontal" 
-    android:background="#000000">
-    
-    <EditText android:id="@+id/start_run"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-         android:layout_weight="1"
-        android:hint="@string/enter_run_name"
-        android:textColor="#CCFFFF"
-        android:textColorHint="#CCFFFF">
-        
-    </EditText>
-    
-        <Button
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/textViewMain1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_draw_map"
-        android:onClick="openMap"/>
-        
-        
-  
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/new_run_name"
+        android:textSize="20sp"
+        android:textColor="#CCFFFF" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/new_run1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/enter_run_name"
+            android:textColor="#CCFFFF"
+            android:textColorHint="#AAAAAA" >
+        </EditText>
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="openNewMap"
+            android:text="@string/button_draw_map"
+            android:textColor="#CCFFFF" />
+    </LinearLayout>
+    
+    
+    <TextView
+        android:id="@+id/textViewMain2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/compare_run_name"
+        android:textSize="20sp"
+        android:textColor="#CCFFFF" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/new_run2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/enter_run_name"
+            android:textColor="#CCFFFF"
+            android:textColorHint="#AAAAAA" >
+        </EditText>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="openCompeteMap"
+            android:text="@string/button_draw_map"
+            android:textColor="#CCFFFF" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/view_run_name"
+        android:onClick="openCompeteMap"
+        android:textColor="#CCFFFF" />
+
 </LinearLayout>

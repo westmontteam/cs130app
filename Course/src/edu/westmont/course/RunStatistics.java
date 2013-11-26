@@ -1,11 +1,8 @@
 package edu.westmont.course;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+
 import java.util.List;
-
 import com.jjoe64.graphview.*;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
