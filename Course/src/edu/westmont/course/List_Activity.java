@@ -12,8 +12,10 @@ import android.widget.ListView;
 public class List_Activity extends ListActivity {
 
 	private PositionsDataSource datasource;
-	LinkedList<String> runList = new LinkedList<String>();
-	String newRunName = "";
+	private LinkedList<String> runList = new LinkedList<String>();
+	private String newRunName = "";
+	private boolean useMetric = false;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,7 @@ public class List_Activity extends ListActivity {
 
 		Intent intent = getIntent();
 		newRunName = intent.getStringExtra(MainActivity.RUN_NAME);
+		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
 		runList.addAll(datasource.getAllRuns());
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, runList));
 	}
@@ -34,6 +37,7 @@ public class List_Activity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		Intent intent = new Intent(this, DrawMap.class);
 		intent.putExtra(MainActivity.RUN_NAME, newRunName);
+		intent.putExtra(MainActivity.USE_METRIC, useMetric);
 		intent.putExtra(MainActivity.COMPETE_NAME, runList.get(position));
 		startActivity(intent);
 	}

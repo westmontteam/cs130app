@@ -43,7 +43,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected boolean useDefaultZoom = true;
 	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
 	protected boolean useMetric = false;
-	protected DistanceFinder ranger = new DistanceFinder(useMetric);
+	protected DistanceFinder ranger;
 	protected String userDefinedName = "";
 	protected LinkedList<Location> listLocation = new LinkedList<Location>();
 	protected LinkedList<Marker> listMarker = new LinkedList<Marker>();
@@ -85,29 +85,34 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		datasource.setRunName(userDefinedName);
 		//datasource.makeRun();
 		datasource.displayAllTables();//to the Log
+		
+		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
+		ranger = new DistanceFinder(useMetric);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.map_menu, menu);
 		menuBar = menu;
-		if (menuBar != null) refreshMenuItems();
+		refreshMenuItems();
 		return true;
 	}
 
 	public void refreshMenuItems(){
-		MenuItem stopButton = menuBar.findItem(R.id.stopButton);
-		MenuItem updateCameraButton = menuBar.findItem(R.id.updateMapCamera);
-		MenuItem showLocationButton = menuBar.findItem(R.id.showCurrentLocation);
+		if (menuBar != null) {
+			MenuItem stopButton = menuBar.findItem(R.id.stopButton);
+			MenuItem updateCameraButton = menuBar.findItem(R.id.updateMapCamera);
+			MenuItem showLocationButton = menuBar.findItem(R.id.showCurrentLocation);
 
-		if (runAgain) stopButton.setTitle(R.string.stop);
-		else stopButton.setTitle(R.string.resume);
+			if (runAgain) stopButton.setTitle(R.string.stop);
+			else stopButton.setTitle(R.string.resume);
 
-		if (moveCamera) updateCameraButton.setTitle(R.string.stay_put);
-		else updateCameraButton.setTitle(R.string.fly_to);
+			if (moveCamera) updateCameraButton.setTitle(R.string.stay_put);
+			else updateCameraButton.setTitle(R.string.fly_to);
 
-		if (showCurrentLocation) showLocationButton.setTitle(R.string.show_all);
-		else showLocationButton.setTitle(R.string.show_current);
+			if (showCurrentLocation) showLocationButton.setTitle(R.string.show_all);
+			else showLocationButton.setTitle(R.string.show_current);
+		}
 	}
 
 	/**
@@ -178,7 +183,6 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			showCurrentLocation = mgr.getShowCurrentPosition();
 			moveCamera = mgr.getMoveCamera();
 			runAgain = mgr.getRunState();
-			useMetric = mgr.getUseMetric();
 			changeMapType(mgr.getMapType());
 		}
 	}

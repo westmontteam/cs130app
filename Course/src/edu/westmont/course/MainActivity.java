@@ -1,10 +1,8 @@
 package edu.westmont.course;
 
 import android.os.Bundle;
-//import android.app.Dialog;
 import android.app.Activity;
 import android.content.Intent;
-//import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +15,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	public final static String RUN_NAME = "edu.westmont.course.MESSAGE";
 	public final static String COMPETE_NAME = "edu.westmont.course.COMPETE";
 	public final static String USE_METRIC = "edu.westmont.course.MEASUREMENT";
-
-
+	private boolean useMetric = false;
+	protected Menu menuBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +27,17 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		menuBar = menu;
+		refreshMenuItems();
 		return true;
+	}
+
+	private void refreshMenuItems() {
+		if (menuBar != null) {
+			MenuItem metricButton = menuBar.findItem(R.id.action_use_metric);
+			if (useMetric) metricButton.setTitle(R.string.use_metric);
+			else metricButton.setTitle(R.string.use_imperial);
+		}
 	}
 
 	public void openNewMap(View view){
@@ -39,6 +47,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (runName.length() > 0) {
 			runName = sanitizeInput(runName);
 			intent.putExtra(RUN_NAME, runName);
+			intent.putExtra(USE_METRIC, useMetric);
 			startActivity(intent);
 		}
 	}
@@ -49,6 +58,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		String runName = editText.getText().toString();		
 		if (runName.length() > 0) runName = sanitizeInput(runName);
 		intent.putExtra(RUN_NAME, runName);
+		intent.putExtra(USE_METRIC, useMetric);
 		startActivity(intent);
 	}
 
@@ -75,6 +85,10 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		if (item.getItemId() == R.id.action_license) showLicense();
+		if (item.getItemId() == R.id.action_use_metric) {
+			useMetric = !useMetric;
+			refreshMenuItems();
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -83,4 +97,20 @@ public class MainActivity extends Activity implements OnClickListener {
 		startActivity(intent);
 	}
 
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		UnitManager mgr = new UnitManager(this);
+		mgr.saveUserState(useMetric);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		UnitManager mgr = new UnitManager(this);
+		if (mgr.checkSavedStatus()) {
+			useMetric = mgr.getUseMetric();
+		}
+	}
 }
