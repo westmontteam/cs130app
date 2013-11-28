@@ -47,6 +47,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (runName.length() > 0) {
 			runName = sanitizeInput(runName);
 			intent.putExtra(RUN_NAME, runName);
+			intent.putExtra(COMPETE_NAME, "");
 			intent.putExtra(USE_METRIC, useMetric);
 			startActivity(intent);
 		}

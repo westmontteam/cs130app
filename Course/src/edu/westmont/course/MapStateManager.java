@@ -20,7 +20,7 @@ public class MapStateManager {
 		mapStatePrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 	}
 
-	public void saveUserState(GoogleMap map, boolean showCurrentLocation, boolean moveCamera, boolean runAgain, boolean useMetric){
+	public void saveUserState(GoogleMap map, boolean showCurrentLocation, boolean moveCamera, boolean runAgain){
 		SharedPreferences.Editor editor = mapStatePrefs.edit();
 		CameraPosition position = map.getCameraPosition();
 		editor.putInt(MAPTYPE, map.getMapType());

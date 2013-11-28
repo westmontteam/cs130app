@@ -44,17 +44,25 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
 	protected boolean useMetric = false;
 	protected DistanceFinder ranger;
-	protected String userDefinedName = "";
+	protected String runName = "";
+	protected String competeName = "";
 	protected LinkedList<Location> listLocation = new LinkedList<Location>();
 	protected LinkedList<Marker> listMarker = new LinkedList<Marker>();
 	protected LinkedList<Polyline> listLine = new LinkedList<Polyline>();
 	protected LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
+	protected LinkedList<String[]> markerStrings = new LinkedList<String[]>();
+
+	protected LinkedList<Location> competeListLocation = new LinkedList<Location>();
+	protected LinkedList<Marker> competeListMarker = new LinkedList<Marker>();
+	protected LinkedList<Polyline> competeListLine = new LinkedList<Polyline>();
+	protected LinkedList<String[]> competeMarkerStrings = new LinkedList<String[]>();	
+
 	protected boolean showCurrentLocation = false;
 	protected boolean moveCamera = true;
 	protected boolean runAgain = true;
 	protected boolean rebooted = true;
+	protected boolean isARace = false;
 	protected PositionsDataSource datasource;
-	protected LinkedList<String[]> MarkerStrings = new LinkedList<String[]>();
 	protected Menu menuBar;
 
 	/**
@@ -65,29 +73,45 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Get data from intent and display the run and/or compete name
+		Intent intent = getIntent();
+		runName = intent.getStringExtra(MainActivity.RUN_NAME);
+		competeName = intent.getStringExtra(MainActivity.COMPETE_NAME);
+		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
+		ranger = new DistanceFinder(useMetric);
+		String displayName = "";
+		if (runName.length() > 0) {
+			isARace = true;
+			displayName += runName;
+			if (competeName.length() > 0) displayName += " vs. ";
+		}
+		displayName += competeName;
+		Toast.makeText(this, displayName, Toast.LENGTH_LONG).show();
+
+
 		if (servicesOk()) {
 			setContentView(R.layout.activity_map);
 			if (initMap()){
-				myLocationClient = new LocationClient(this, this, this);
-				myLocationClient.connect();
+				if (isARace) {
+					myLocationClient = new LocationClient(this, this, this);
+					myLocationClient.connect();
+				}
 			}
 			else Toast.makeText(this, "The map in not available right now.", Toast.LENGTH_SHORT).show();
 		}
 		else setContentView(R.layout.activity_main);
 
-		Intent intent = getIntent();
-		userDefinedName = intent.getStringExtra(MainActivity.RUN_NAME);
-		Toast.makeText(this, userDefinedName, Toast.LENGTH_SHORT).show();
-
 		Log.w("DrawMap","opening database");
 		datasource = new PositionsDataSource(this);
 		datasource.open();
-		datasource.setRunName(userDefinedName);
+		if (isARace) datasource.setRunName(runName);
 		//datasource.makeRun();
 		datasource.displayAllTables();//to the Log
-		
-		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
-		ranger = new DistanceFinder(useMetric);
+		if (competeName.length() > 0) {
+			addBatch(datasource.getCurrentRun(competeName), false, new DistanceFinder(useMetric), competeListLocation, competeListMarker, competeListLine, competeMarkerStrings, Color.RED);
+			//if (competeListLocation.size() > 0) gotoLatLng(new LatLng(competeListLocation.getLast().getLatitude(), competeListLocation.getLast().getLongitude()));
+		}
 	}
 
 	@Override
@@ -104,9 +128,11 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			MenuItem updateCameraButton = menuBar.findItem(R.id.updateMapCamera);
 			MenuItem showLocationButton = menuBar.findItem(R.id.showCurrentLocation);
 
-			if (runAgain) stopButton.setTitle(R.string.stop);
-			else stopButton.setTitle(R.string.resume);
-
+			if (!isARace) stopButton.setTitle("");
+			else {
+				if (runAgain) stopButton.setTitle(R.string.stop);
+				else stopButton.setTitle(R.string.resume);
+			}
 			if (moveCamera) updateCameraButton.setTitle(R.string.stay_put);
 			else updateCameraButton.setTitle(R.string.fly_to);
 
@@ -130,13 +156,13 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			break;
 		case R.id.updateMapCamera:
 			moveCamera = !moveCamera;
-			if (moveCamera) gotoCurrentLocation(false);
+			if (moveCamera) gotoCurrentLocation();
 			refreshMenuItems();
 			break;
 		case R.id.showCurrentLocation:
 			showCurrentLocation = !showCurrentLocation;
 			if (showCurrentLocation) useDefaultZoom = true;
-			gotoCurrentLocation(false);
+			gotoCurrentLocation();
 			refreshMenuItems();
 			break;
 		case R.id.mapTypeNormal:
@@ -152,8 +178,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			changeMapType(GoogleMap.MAP_TYPE_TERRAIN);
 			break;
 		case R.id.doneButton:
-			datasource.done(userDefinedName);
-			runAgain = false;
+			datasource.done(runName);
 			startRunStatistics();
 			break;
 		default:
@@ -171,8 +196,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected void onStop() {
 		super.onStop();
 		MapStateManager mgr = new MapStateManager(this);
-		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain, useMetric);
-		myLocationClient.disconnect();
+		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain);
+		if (myLocationClient != null) myLocationClient.disconnect();
 	}
 
 	@Override
@@ -227,20 +252,22 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 				@Override
 				public View getInfoContents(Marker marker) {
 					View v = getLayoutInflater().inflate(R.layout.info_window, null);
-					//TextView tvtitle = (TextView) v.findViewById(R.id.tv_title);
 					TextView tv1 = (TextView) v.findViewById(R.id.tv_text1);
 					TextView tv2 = (TextView) v.findViewById(R.id.tv_text2);
 					TextView tv3 = (TextView) v.findViewById(R.id.tv_text3);
 					TextView tv4 = (TextView) v.findViewById(R.id.tv_text4);
 					TextView tv5 = (TextView) v.findViewById(R.id.tv_text5);
 					int ref = Integer.parseInt(marker.getTitle())-1;
-					//tvtitle.setText(marker.getTitle() + ". " + userDefinedName);
-					if (ref < MarkerStrings.size()){
-						tv1.setText("Distance: " + MarkerStrings.get(ref)[0]);
-						tv2.setText("Time: " + MarkerStrings.get(ref)[1]);
-						tv3.setText("Speed: " + MarkerStrings.get(ref)[2]);
-						tv4.setText("Avg. Speed: " + MarkerStrings.get(ref)[3]);
-						tv5.setText("Altitude: " + MarkerStrings.get(ref)[4]);
+					int type = Integer.parseInt(marker.getSnippet());
+					String[] content = null;
+					if ((type == Color.BLUE) && (ref < markerStrings.size())) content = markerStrings.get(ref);
+					else if ((type == Color.RED) && (ref < competeMarkerStrings.size())) content = competeMarkerStrings.get(ref);
+					if (content != null) {
+						tv1.setText("Distance: " + content[0]);
+						tv2.setText("Time: " + content[1]);
+						tv3.setText("Speed: " + content[2]);
+						tv4.setText("Avg. Speed: " + content[3]);
+						tv5.setText("Altitude: " + content[4]);
 					}
 					return v;
 				}
@@ -249,28 +276,28 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		return (myMap != null);
 	}
 
-	protected void gotoCurrentLocation(boolean add){
+	protected void gotoCurrentLocation(){
 		Location location = myLocationClient.getLastLocation();
 		if (location == null) Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_LONG).show();
-		else gotoLocation(location,add,add,add);
+		else gotoLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
 	}
 
-	protected void gotoLocation(Location loc, boolean includeDatabase, boolean addMarker, boolean addLine){
-		LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
+	protected void updateMap(boolean includeDatabase, Location loc, DistanceFinder df, LinkedList<Location> locations, LinkedList<Marker> markers, LinkedList<Polyline> lines, LinkedList<String[]> strings, int color) {
 		if (loc.getAccuracy() < 100) {
-			if (includeDatabase || addMarker || addLine) {
-				boundsBuilder.include(ll);
-				listLocation.add(loc);
-				ranger.addDistanceToLocation(loc);
-			}
-			if (includeDatabase) datasource.createPosition(loc,userDefinedName);
-			if (addMarker) {
-				MarkerStrings.add(ranger.getLastString());
-				addMarkerToMap(ll, listMarker);
-			}
-			if (addLine && listLocation.size() > 1) drawLine(listLocation.get(listLocation.size()-2), listLocation.getLast(), listLine, Color.BLUE);
+			LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
+			locations.add(loc);
+			df.addDistanceToLocation(loc);
+			if (includeDatabase) datasource.createPosition(loc,runName);
+			strings.add(df.getLastString());
+			addMarkerToMap(ll, markers, df, color);
+			if (locations.size() > 1) drawLine(locations.get(locations.size()-2), locations.getLast(), lines, color);
+			gotoLatLng(ll);
 		}
-		if (moveCamera){
+	}
+
+	protected void gotoLatLng(LatLng ll){
+		boundsBuilder.include(ll);
+		if (moveCamera) {
 			CameraUpdate update;
 			if (showCurrentLocation && useDefaultZoom) {
 				update = CameraUpdateFactory.newLatLngZoom(ll, defaultZoom);
@@ -285,9 +312,10 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 	}
 
-	protected void addMarkerToMap(LatLng ll, LinkedList<Marker> list){
+	protected void addMarkerToMap(LatLng ll, LinkedList<Marker> list, DistanceFinder df, int type){
 		MarkerOptions options = new MarkerOptions()
-		.title(ranger.getNameInt())
+		.title(df.getNameInt())
+		.snippet(String.valueOf(type))
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location))
 		.anchor(.5f,.5f)
 		.position(ll);
@@ -327,7 +355,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		if (resetLocations){
 			listLocation = new LinkedList<Location>();
 			ranger = new DistanceFinder(useMetric);
-			MarkerStrings = new LinkedList<String[]>();
+			markerStrings = new LinkedList<String[]>();
 			boundsBuilder = LatLngBounds.builder();
 		}
 	}
@@ -354,29 +382,31 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public void onLocationChanged(Location loc) {
 		if (rebooted) {
-			addBatch(datasource.getCurrentRun(userDefinedName),false,true,true);
+			//addBatch(datasource.getCurrentRun(runName), false, ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
 			rebooted = false;
 		}
 		if (runAgain){
 			//gotoLocation(loc,true,true,true);
-			gotoLocation(lc.next(),true,true,true);
+			updateMap(true, lc.next(), ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
 			//addBatch(lc.getBatch(100),false,true,true);
 		}
 	}
 
-	public void addBatch(java.util.Collection<? extends Location> list, boolean addDatabase, boolean addMarker, boolean addLine){
-		Log.i("drawMap","made it to addBatch");
+	public void addBatch(java.util.Collection<? extends Location> list, boolean includeDatabase, DistanceFinder df, LinkedList<Location> locations, LinkedList<Marker> markers, LinkedList<Polyline> lines, LinkedList<String[]> strings, int color){
+		Log.i("drawMap","made james it to addBatch");
 		Iterator<? extends Location> iterator = list.iterator();
 		moveCamera = false;
 		while (iterator.hasNext()){
-			gotoLocation(iterator.next(),addDatabase,addMarker,addLine);
+			Log.i("drawMap", String.valueOf(locations.size()));
+			updateMap(includeDatabase, iterator.next(), df, locations, markers, lines, strings, color);
 		}
 		moveCamera = true;
-		if (listLocation.size() > 0) gotoLocation(listLocation.getLast(),false,false,false);
 	}
+
 	public void startRunStatistics(){
+		if (myLocationClient != null) myLocationClient.disconnect();
 		Intent intent = new Intent(this,RunStatistics.class);
-		intent.putExtra(MainActivity.RUN_NAME, userDefinedName);
+		intent.putExtra(MainActivity.RUN_NAME, runName);
 		intent.putExtra(MainActivity.USE_METRIC, useMetric);
 		startActivity(intent);
 	}
