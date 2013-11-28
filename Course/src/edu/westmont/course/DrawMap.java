@@ -350,7 +350,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public void onLocationChanged(Location loc) {
 		if (rebooted) {
-			addBatch(datasource.getAllPositions(userDefinedName),false,true,true);
+			addBatch(datasource.getCurrentRun(userDefinedName),false,true,true);
 			rebooted = false;
 		}
 		if (runAgain){
@@ -361,7 +361,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	}
 
 	public void addBatch(java.util.Collection<? extends Location> list, boolean addDatabase, boolean addMarker, boolean addLine){
-		Log.w("drawMap","made it to addBatch");
+		Log.i("drawMap","made it to addBatch");
 		Iterator<? extends Location> iterator = list.iterator();
 		moveCamera = false;
 		while (iterator.hasNext()){

@@ -64,7 +64,7 @@ public class RunStatistics extends Activity {
 		}
 		double x,y=0;
 		long startTime;
-		List<Position> positions = datasource.getAllPositions(runName);
+		List<Position> positions = datasource.getCurrentRun(runName);
 		if (positions.size()>0){
 			startTime = positions.get(0).getTime();
 		} else startTime = 0;

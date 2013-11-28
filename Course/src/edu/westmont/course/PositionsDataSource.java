@@ -99,10 +99,10 @@ public class PositionsDataSource {
 	    }
   }
 
-  //gets all positions from the current runs table
-  public List<Position> getAllPositions(String runName) {
+  //gets all positions from the current runs table. Use an id of 0 or less to get the current run.
+  public List<Position> getAllPositions(String runName,int id) {
     List<Position> positions = new ArrayList<Position>();
-    int id = getLastID(runName);
+    if (id < 0) id = getLastID(runName);
 
     Cursor cursor = database.query(MySQLiteHelper.TABLE_POSITIONS,
         allColumns, MySQLiteHelper.COLUMN_ID + "=" + id, null, null, null, null);
@@ -117,6 +117,11 @@ public class PositionsDataSource {
     cursor.close();
     Log.w("dataSource","finished with getting all positions");
     return positions;
+  }
+  
+  public List<Position> getCurrentRun(String runName){
+	  int id = getLastID(runName);
+	  return getAllPositions(runName,id);
   }
 
   private Position cursorToPosition(Cursor cursor) {
@@ -152,7 +157,7 @@ public class PositionsDataSource {
 	  }
 	  cursor.close();
 	  
-	  values.put(MySQLiteHelper.COLUMN_RUN, runName);
+	  values.put(MySQLiteHelper.COLUMN_RUN, getLastID(runName));
 	  values.put(MySQLiteHelper.COLUMN_HIGHEST_SPEED, speed);
 	  values.put(MySQLiteHelper.COLUMN_BEST_TIME, time);
 	  values.put(MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE, altitude);
@@ -167,12 +172,13 @@ public class PositionsDataSource {
 	  
 	  for (i=0;i<runIDs.length;i++){
 	    //delete from positions
-		Log.w("deleteRun","# of rows deleted: " + database.delete(MySQLiteHelper.TABLE_POSITIONS, MySQLiteHelper.COLUMN_ID + "=" + runIDs[i], null));
+		Log.w("deleteRun",
+				"# of rows deleted: " + database.delete(MySQLiteHelper.TABLE_POSITIONS, MySQLiteHelper.COLUMN_ID + "=" + runIDs[i], null));
 		//delete from runs
 		database.delete(MySQLiteHelper.TABLE_RUNS, MySQLiteHelper.COLUMN_RUN_ID + "=" + runIDs[i], null);
+		//delete from stats
+		database.delete(MySQLiteHelper.TABLE_STATS, MySQLiteHelper.COLUMN_RUN + "=" + runIDs[i], null);
 	  }
-	 //delete from stats
-	  database.delete(MySQLiteHelper.TABLE_STATS, MySQLiteHelper.COLUMN_RUN + "=" + "'"+runName+"'", null);
   }
 	  
   //total time in Seconds
@@ -196,19 +202,50 @@ public class PositionsDataSource {
   
   public double highest(String runName,String column){
 	  String[] columns = {column, MySQLiteHelper.COLUMN_DATE};
-	  double spdOrAlt;
-	  Log.w("highest","runName is: " + runName);
-	  Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, columns , MySQLiteHelper.COLUMN_RUN + "=" + "'"+runName+"'", 
-			  null, null, null, null);
+	  double spdOrAlt = 0;
+	  //Log.w("highest","runName is: " + runName);
+	  Cursor cursor = getAllFromStatistics(getIDs(runName),columns);
 	  cursor.moveToLast();
-	  spdOrAlt = cursor.getDouble(0);
+	  if (column.equals(MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) spdOrAlt = cursor.getDouble(3);
+	  if (column.equals(MySQLiteHelper.COLUMN_HIGHEST_SPEED)) spdOrAlt = cursor.getDouble(1);
 	  cursor.close();
 	  Log.w("PositionsDataSource", "highest Speed is: " + spdOrAlt);
 	  return spdOrAlt;
   }
   
+  private Cursor getAllFromStatistics(int[] ids,String[] columns){
+	  String IDs = intArrayToString(ids);
+	  String selection = stringArrayToString(columns);
+	  Log.w("getAllFromStatistics","IDs are: " + IDs);
+	  Log.w("getAllFromStatistics","selections are: " + selection);
+	  String query = "SELECT "+ "*" +" FROM " + MySQLiteHelper.TABLE_STATS + " WHERE "+ MySQLiteHelper.COLUMN_RUN +" IN " + IDs;
+	 return database.rawQuery(query,null);
+  }
+  //I don't know where to put these next two methods. Also there is probably some way to combine the two, but I don't know
+  //how to handle the conflicting data types.
+  public static String stringArrayToString(String[] array){
+	  int i;
+	  String string = "(";
+	  for (i=0;i<array.length;i++){
+		  string += array[i] + "";
+		  if (i<array.length - 1) string += ",";
+	  }
+	  string += ")";
+	  return string;
+  }
+  public static String intArrayToString(int[] array){
+	  int i;
+	  String string = "(";
+	  for (i=0;i<array.length;i++){
+		  string += array[i] + "";
+		  if (i<array.length - 1) string += ",";
+	  }
+	  string += ")";
+	  return string;
+  }
+  
   public double totalDistance(String runName){
-	 List<Position> positions = getAllPositions(runName);
+	 List<Position> positions = getCurrentRun(runName);
 	 Position position;
 	 double totalDistance = 0;
 	 int i;
@@ -226,14 +263,13 @@ public class PositionsDataSource {
   public Point[] timeVsNumber(String runName){
 	  Point[] points;
 	  int i;
-	  String[] columns = {MySQLiteHelper.COLUMN_BEST_TIME};
-	  Cursor cursor = database.query(MySQLiteHelper.TABLE_STATS, columns , MySQLiteHelper.COLUMN_RUN + "=" + "'"+runName+"'", 
-			  null, null, null, null);
+	  String[] column = {MySQLiteHelper.COLUMN_BEST_TIME};
+	  Cursor cursor = getAllFromStatistics(getIDs(runName), column);
 	  cursor.moveToFirst();
 	  Log.w("PositionsDataSource","cursor count is: " + cursor.getCount());
 	  points = new Point[cursor.getCount()];
 	  for (i=0;i<cursor.getCount();i++){
-		  points[i] = new Point(i,cursor.getLong(0) / 1000);
+		  points[i] = new Point(i,cursor.getLong(2) / 1000);
 		  cursor.moveToNext();
 	  }
 	  cursor.close();
@@ -284,6 +320,22 @@ public class PositionsDataSource {
 		  cursor.moveToNext();
 	  }
 	  return runs;
+  }
+  
+  public List<Position> getBestRun(String runName,String column){
+	  String[] columns = {MySQLiteHelper.COLUMN_RUN,column};
+	  Cursor cursor = getAllFromStatistics(getIDs(runName),columns);
+	  long bestTime = -1;
+	  int theID = -1;
+	  cursor.moveToFirst();
+	  while (!cursor.isAfterLast()){
+		  if (bestTime > cursor.getLong(1) || bestTime < 0){
+			  bestTime = cursor.getLong(1);
+			  theID = cursor.getInt(0);
+		  }
+		  cursor.moveToNext();
+	  }
+	  return getAllPositions(runName,theID);
   }
   
   public void done(String runName){
