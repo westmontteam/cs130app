@@ -227,14 +227,14 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 				@Override
 				public View getInfoContents(Marker marker) {
 					View v = getLayoutInflater().inflate(R.layout.info_window, null);
-					TextView tvtitle = (TextView) v.findViewById(R.id.tv_title);
+					//TextView tvtitle = (TextView) v.findViewById(R.id.tv_title);
 					TextView tv1 = (TextView) v.findViewById(R.id.tv_text1);
 					TextView tv2 = (TextView) v.findViewById(R.id.tv_text2);
 					TextView tv3 = (TextView) v.findViewById(R.id.tv_text3);
 					TextView tv4 = (TextView) v.findViewById(R.id.tv_text4);
 					TextView tv5 = (TextView) v.findViewById(R.id.tv_text5);
 					int ref = Integer.parseInt(marker.getTitle())-1;
-					tvtitle.setText(marker.getTitle() + ". " + userDefinedName);
+					//tvtitle.setText(marker.getTitle() + ". " + userDefinedName);
 					if (ref < MarkerStrings.size()){
 						tv1.setText("Distance: " + MarkerStrings.get(ref)[0]);
 						tv2.setText("Time: " + MarkerStrings.get(ref)[1]);
