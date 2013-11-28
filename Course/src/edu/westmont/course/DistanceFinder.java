@@ -2,8 +2,6 @@
 package edu.westmont.course;
 
 import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.Iterator;
 import android.location.Location;
 
 public class DistanceFinder {

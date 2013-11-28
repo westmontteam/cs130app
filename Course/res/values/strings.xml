@@ -17,19 +17,25 @@
     <string name="show_current">Show Current Position</string>
     <string name="show_all">Show Whole Course</string>
     <string name="title_activity_draw_map">DrawMap</string>
-    <string name="enter_run_name">Enter run name</string>
+    <string name="new_run_name">Create a new route</string>
+    <string name="compare_run_name">Compete on an existing route</string>
+    <string name="view_run_name">View existing routes</string>
+    <string name="enter_run_name">Enter new route name</string>
     <string name="button_draw_map">Go!</string>
     <string name="map_info">Course Detail</string>
     <string name="stop">Stop</string>
     <string name="resume">Resume</string>
     <string name="reset_map">Reset Map</string>
     <string name="finished">Finished</string>
-    <string name="title_activity_run_statistics">RunStatistics</string>
+    <string name="title_activity_run_statistics">Route Statistics</string>
     <string name="button_graph_altitude">Altitude</string>
     <string name="button_graph_speed">Speed</string>
     <string name="button_show_stats">Statistics</string>
     <string name="gp_license">Google Play License</string>
     <string name="show_stats">Statistics</string>
-    <string name="show_older_times">Previous Times</string>
+    <string name="show_older_times">Comparison</string>
+    <string name="use_metric">Distances in meters, km</string>
+    <string name="use_imperial">Distances in feet, mi</string>
+        <string name="quitApp">Exit App</string>
 
 </resources>

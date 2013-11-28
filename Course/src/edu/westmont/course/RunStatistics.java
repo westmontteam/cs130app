@@ -1,11 +1,8 @@
 package edu.westmont.course;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+
 import java.util.List;
-
 import com.jjoe64.graphview.*;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -39,7 +36,6 @@ public class RunStatistics extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.run_statistics, menu);
 		return true;
 	}
@@ -50,7 +46,7 @@ public class RunStatistics extends Activity {
 		}
 		return value*metersToMph;
 	}
-
+	
 	private void displayGraph(String type){
 		String yLabel = "";
 		int i;
@@ -79,7 +75,6 @@ public class RunStatistics extends Activity {
 		Log.w("RunStatistics","Made it past the point initialization. There are: " + points.length + " points");
 		GraphViewSeries exampleSeries = new GraphViewSeries(points);
 		GraphView graphView = new LineGraphView(this,type+yLabel);
-		//graphView.setPadding(50, 50, 50, 50);
 		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
 			public String formatLabel(double value, boolean isValueX) {
 				if (!isValueX) {
@@ -96,6 +91,7 @@ public class RunStatistics extends Activity {
 	}
 	
 	public void showStats(View view){
+		DistanceFinder ranger = new DistanceFinder(useMetric);
 		StringBuilder message = new StringBuilder();
 		Log.w("RunStatistics","Displaying Statistics");
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
@@ -103,11 +99,11 @@ public class RunStatistics extends Activity {
 		Log.w("Stats","Constructing TextView");
 		Log.w("Stats","run name is: " + runName);
 		TextView textView = new TextView(getBaseContext());
-		message.append("Total time: " + datasource.totalTime(runName).toString() + " seconds. \n");
-		message.append("Highest speed: " + Math.round(datasource.highest(runName,MySQLiteHelper.COLUMN_SPEED)) + " m/s \n");
-		message.append("Highest Altitude: " + Math.round(datasource.highest(runName, MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) + " meters. \n");
-		message.append("Total distance: " + Math.round(datasource.totalDistance(runName)) + " meters. \n");
-		message.append("Average speed: " + Math.round(datasource.averageSpeed(runName)) + " m/s.");
+		message.append("Total time: " + ranger.getElapsedTimeString(datasource.totalTime(runName)*1000) + "\n");
+		message.append("Highest speed: " + ranger.getSpeedString(datasource.highest(runName,MySQLiteHelper.COLUMN_SPEED)) + "\n");
+		message.append("Highest Altitude: " + ranger.getAltitudeString(datasource.highest(runName, MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) + "\n");
+		message.append("Total distance: " + ranger.getDistanceString(datasource.totalDistance(runName)) + "\n");
+		message.append("Average speed: " + ranger.getSpeedString(datasource.averageSpeed(runName)));
 		Log.w("Stats","setting Text.");
 		textView.setText(message.toString(), null);
 		Log.w("Stats","adding view");

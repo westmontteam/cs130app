@@ -2,8 +2,6 @@
 package edu.westmont.course;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,8 +12,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Log;
-
-import com.google.android.gms.maps.model.LatLng;
 
 public class PositionsDataSource {
 	
