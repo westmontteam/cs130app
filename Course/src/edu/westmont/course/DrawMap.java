@@ -108,7 +108,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		//datasource.makeRun();
 		datasource.displayAllTables();//to the Log
 		if (competeName.length() > 0) {
-			addBatch(datasource.getCurrentRun(competeName), false, new DistanceFinder(useMetric), competeListLocation, competeListMarker, competeListLine, competeMarkerStrings, Color.RED);
+			addBatch(datasource.getBestRun(competeName,MySQLiteHelper.COLUMN_BEST_TIME), false, new DistanceFinder(useMetric), competeListLocation, competeListMarker, competeListLine, competeMarkerStrings, Color.RED);
 			//if (competeListLocation.size() > 0) gotoLatLng(new LatLng(competeListLocation.getLast().getLatitude(), competeListLocation.getLast().getLongitude()));
 		}
 	}
