@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 
 public class MainActivity extends Activity implements OnClickListener {
 

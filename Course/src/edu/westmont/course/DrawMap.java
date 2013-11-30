@@ -109,7 +109,24 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		datasource.displayAllTables();//to the Log
 		if (competeName.length() > 0) {
 			addBatch(datasource.getBestRun(competeName,MySQLiteHelper.COLUMN_BEST_TIME), false, new DistanceFinder(useMetric), competeListLocation, competeListMarker, competeListLine, competeMarkerStrings, Color.RED);
-			//if (competeListLocation.size() > 0) gotoLatLng(new LatLng(competeListLocation.getLast().getLatitude(), competeListLocation.getLast().getLongitude()));
+			if (!isARace) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (competeListLocation.size() > 0) gotoLatLng(new LatLng(competeListLocation.getLast().getLatitude(), competeListLocation.getLast().getLongitude()));
+							}
+						});
+					}
+				}).start();
+			}
 		}
 	}
 
@@ -393,7 +410,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	@Override
 	public void onLocationChanged(Location loc) {
 		if (rebooted) {
-			//addBatch(datasource.getCurrentRun(runName), false, ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
+			addBatch(datasource.getCurrentRun(runName), false, ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
 			rebooted = false;
 		}
 		if (runAgain){
