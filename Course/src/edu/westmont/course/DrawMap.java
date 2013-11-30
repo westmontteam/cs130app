@@ -89,7 +89,6 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		displayName += competeName;
 		Toast.makeText(this, displayName, Toast.LENGTH_LONG).show();
 
-
 		if (servicesOk()) {
 			setContentView(R.layout.activity_map);
 			if (initMap()){
@@ -125,10 +124,13 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	public void refreshMenuItems(){
 		if (menuBar != null) {
 			MenuItem stopButton = menuBar.findItem(R.id.stopButton);
+			MenuItem resetButton = menuBar.findItem(R.id.resetButton);
 			MenuItem updateCameraButton = menuBar.findItem(R.id.updateMapCamera);
 			MenuItem showLocationButton = menuBar.findItem(R.id.showCurrentLocation);
-
-			if (!isARace) stopButton.setTitle("");
+			if (!isARace) {
+				stopButton.setTitle("");
+				resetButton.setTitle("");
+			}
 			else {
 				if (runAgain) stopButton.setTitle(R.string.stop);
 				else stopButton.setTitle(R.string.resume);
@@ -252,6 +254,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 				@Override
 				public View getInfoContents(Marker marker) {
 					View v = getLayoutInflater().inflate(R.layout.info_window, null);
+					TextView tvTitle = (TextView) v.findViewById(R.id.tv_title);
 					TextView tv1 = (TextView) v.findViewById(R.id.tv_text1);
 					TextView tv2 = (TextView) v.findViewById(R.id.tv_text2);
 					TextView tv3 = (TextView) v.findViewById(R.id.tv_text3);
@@ -260,12 +263,18 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 					int ref = Integer.parseInt(marker.getTitle())-1;
 					int type = Integer.parseInt(marker.getSnippet());
 					String[] content = null;
-					if ((type == Color.BLUE) && (ref < markerStrings.size())) content = markerStrings.get(ref);
-					else if ((type == Color.RED) && (ref < competeMarkerStrings.size())) content = competeMarkerStrings.get(ref);
+					if ((type == Color.BLUE) && (ref < markerStrings.size())) {
+						content = markerStrings.get(ref);
+						tvTitle.setText(runName);
+					}
+					else if ((type == Color.RED) && (ref < competeMarkerStrings.size())) {
+						content = competeMarkerStrings.get(ref);
+						tvTitle.setText(competeName);
+					}
 					if (content != null) {
 						tv1.setText("Distance: " + content[0]);
 						tv2.setText("Time: " + content[1]);
-						tv3.setText("Speed: " + content[2]);
+						tv3.setText("Current Speed: " + content[2]);
 						tv4.setText("Avg. Speed: " + content[3]);
 						tv5.setText("Altitude: " + content[4]);
 					}
@@ -313,6 +322,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	}
 
 	protected void addMarkerToMap(LatLng ll, LinkedList<Marker> list, DistanceFinder df, int type){
+		int point = R.drawable.ic_point;
+		if (type == Color.RED) point = R.drawable.ic_point_red; 
 		MarkerOptions options = new MarkerOptions()
 		.title(df.getNameInt())
 		.snippet(String.valueOf(type))
@@ -320,8 +331,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		.anchor(.5f,.5f)
 		.position(ll);
 		list.add(myMap.addMarker(options));
-		if (list.size() > 2){
-			list.get(list.size()-2).setVisible(false);
+		if (list.size() > 1){
+			list.get(list.size()-2).setIcon(BitmapDescriptorFactory.fromResource(point));
 		}
 	}
 
