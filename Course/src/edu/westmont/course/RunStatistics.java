@@ -1,11 +1,15 @@
 package edu.westmont.course;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import com.jjoe64.graphview.*;
+import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -16,8 +20,11 @@ import android.widget.TextView;
 public class RunStatistics extends Activity {
 
 	private String runName="";
+	private String competeName = "";
 	private PositionsDataSource datasource;
 	private boolean useMetric = false;
+	List<Position> runPositions = new ArrayList<Position>();
+	List<Position> competePositions = new ArrayList<Position>();;
 	final private double metersToMph = 2.236936364;
 	final private double metersToKph = 3.6;
 	
@@ -28,10 +35,17 @@ public class RunStatistics extends Activity {
 
 		Intent intent = getIntent();
 		runName = intent.getStringExtra(MainActivity.RUN_NAME);
+		competeName = intent.getStringExtra(MainActivity.COMPETE_NAME);
 		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
+		
+		Log.w("onCreate","Started RunStatistics. The Run is--" + runName + "-- and the competeName is--" + competeName + "--");
+		
 		datasource = new PositionsDataSource(this);
 		datasource.open();
-		
+		Log.w("onCreate","Gathering data from DB for " + runName);
+		if (runName.length() > 0) runPositions = datasource.getCurrentRun(runName);
+		Log.w("onCreate","Gathering data from DB for " + competeName);
+		if (competeName.length() > 0) competePositions = datasource.getCurrentRun(competeName);
 	}
 
 	@Override
@@ -47,9 +61,29 @@ public class RunStatistics extends Activity {
 		return value*metersToMph;
 	}
 	
+	private GraphViewSeries getGraphViewSeries(List<Position> input, String graphType, String lineName, int color) {
+		Log.w("getGraphViewSeries","Starting to create graph view for " + lineName);
+		long startTime = 0;
+		if (input.size()>0){
+			startTime = input.get(0).getTime();
+		}
+		double x,y=0;
+		Point[] points = new Point[input.size()];
+		for (int i=0; i<input.size(); i++){
+			Position position = input.get(i);
+			x = (position.getTime() - startTime) / 1000;
+			if (graphType.equals("Altitude")) y = (double) position.getAltitude();
+			if (graphType.equals("Speed")) y = (double) position.getSpeed();
+			points[i] = new Point(x,y);
+		}
+		GraphViewSeries gvSeries = null;
+		if (points.length > 0) gvSeries = new GraphViewSeries(lineName, new GraphViewSeriesStyle(color, 5),points);
+		Log.w("getGraphViewSeries","Successfully created graph view for " + lineName);
+		return gvSeries;
+	}
+	
 	private void displayGraph(String type){
 		String yLabel = "";
-		int i;
 		if (type.equals("Altitude")) {
 			if (useMetric) yLabel = " (meters)";
 			if (!useMetric) yLabel = " (feet)";
@@ -58,22 +92,10 @@ public class RunStatistics extends Activity {
 			if (useMetric) yLabel = " (kph)";
 			if (!useMetric) yLabel = " (mph)";
 		}
-		double x,y=0;
-		long startTime;
-		List<Position> positions = datasource.getCurrentRun(runName);
-		if (positions.size()>0){
-			startTime = positions.get(0).getTime();
-		} else startTime = 0;
-		Point[] points = new Point[positions.size()];
-		for (i=0;i<positions.size();i++){
-			Position position = positions.get(i);
-			x = (position.getTime() - startTime) / 1000;
-			if (type.equals("Altitude")) y = (double) position.getAltitude();
-			if (type.equals("Speed")) y = (double) position.getSpeed();
-			points[i] = new Point(x,y);
-		}
-		Log.w("RunStatistics","Made it past the point initialization. There are: " + points.length + " points");
-		GraphViewSeries exampleSeries = new GraphViewSeries(points);
+		GraphViewSeries runSeries = getGraphViewSeries(runPositions, type, runName, Color.BLUE);
+		GraphViewSeries competeSeries = getGraphViewSeries(competePositions, type, competeName, Color.RED);
+		Log.w("RunStatistics","Made it past the point initialization. There are: " + competePositions.size() + " points");
+		
 		GraphView graphView = new LineGraphView(this,type+yLabel);
 		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
 			public String formatLabel(double value, boolean isValueX) {
@@ -83,7 +105,8 @@ public class RunStatistics extends Activity {
 				return null; // let graphview generate X-axis label for us
 			}
 		});
-		graphView.addSeries(exampleSeries); // data  
+		if (runSeries != null) graphView.addSeries(runSeries);
+		if (competeSeries != null) graphView.addSeries(competeSeries);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
 		graphView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 		layout.removeViewAt(1);

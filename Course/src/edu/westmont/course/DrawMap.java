@@ -435,6 +435,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		if (myLocationClient != null) myLocationClient.disconnect();
 		Intent intent = new Intent(this,RunStatistics.class);
 		intent.putExtra(MainActivity.RUN_NAME, runName);
+		intent.putExtra(MainActivity.COMPETE_NAME, competeName);
 		intent.putExtra(MainActivity.USE_METRIC, useMetric);
 		startActivity(intent);
 	}
