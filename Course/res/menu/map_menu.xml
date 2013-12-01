@@ -5,25 +5,19 @@
 
     <item
         android:id="@+id/stopButton"
-        android:orderInCategory="93"
+        android:orderInCategory="1"
         android:showAsAction="ifRoom"
         android:title="@string/stop"/>
     <item
         android:id="@+id/resetButton"
-        android:orderInCategory="94"
-        android:showAsAction="ifRoom"
+        android:orderInCategory="95"
+        android:showAsAction="never"
         android:title="@string/reset_map"/>
-    
     <item
         android:id="@+id/showCurrentLocation"
         android:orderInCategory="96"
         android:showAsAction="never"
         android:title="@string/show_current"/>
-    <item
-        android:id="@+id/updateMapCamera"
-        android:orderInCategory="97"
-        android:showAsAction="never"
-        android:title="@string/stay_put"/>
     <item
         android:id="@+id/mapTypeNormal"
         android:orderInCategory="98"
@@ -44,10 +38,10 @@
         android:orderInCategory="101"
         android:showAsAction="never"
         android:title="@string/menu_hybrid"/>
-
     <item
         android:id="@+id/doneButton"
-        android:orderInCategory="95"
+        android:orderInCategory="102"
         android:showAsAction="ifRoom"
         android:title="@string/finished"/>
+
 </menu>

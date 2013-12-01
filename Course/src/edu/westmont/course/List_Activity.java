@@ -48,23 +48,22 @@ public class List_Activity extends ListActivity {
 		Log.i("onListItemClick","Starting activity DrawMap with the compete name of " + runList.get(position));
 		startActivity(intent);
 	}
-	
+
 	private class MyAdapter extends ArrayAdapter<String> {
 
 		public MyAdapter(Context context, int resource, int textViewResourceId,
 				List<String> objects) {
 			super(context, resource, textViewResourceId, objects);
-
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			Log.v("getView","Using custom list adaterr to display " + runList.get(position));
 			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View row = inflater.inflate(R.layout.list_item, parent, false); 
 			TextView tv = (TextView) row.findViewById(R.id.list_content);
 			tv.setText(runList.get(position));
 			return row;
 		}
-		
 	}
 }

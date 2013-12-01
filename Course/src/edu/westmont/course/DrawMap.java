@@ -145,19 +145,15 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		if (menuBar != null) {
 			MenuItem stopButton = menuBar.findItem(R.id.stopButton);
 			MenuItem resetButton = menuBar.findItem(R.id.resetButton);
-			MenuItem updateCameraButton = menuBar.findItem(R.id.updateMapCamera);
 			MenuItem showLocationButton = menuBar.findItem(R.id.showCurrentLocation);
 			if (!isARace) {
-				stopButton.setTitle("");
-				resetButton.setTitle("");
+				stopButton.setVisible(false);
+				resetButton.setVisible(false);
 			}
 			else {
 				if (runAgain) stopButton.setTitle(R.string.stop);
 				else stopButton.setTitle(R.string.resume);
 			}
-			if (moveCamera) updateCameraButton.setTitle(R.string.stay_put);
-			else updateCameraButton.setTitle(R.string.fly_to);
-
 			if (showCurrentLocation) showLocationButton.setTitle(R.string.show_all);
 			else showLocationButton.setTitle(R.string.show_current);
 		}
@@ -174,15 +170,14 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			runAgain = !runAgain;
 			refreshMenuItems();
 			break;
+		case R.id.doneButton:
+			Log.v("onOptionsItemSelected","Done button pressed");
+			datasource.done(runName);
+			startRunStatistics();
+			break;
 		case R.id.resetButton:
 			Log.v("onOptionsItemSelected","Reset button pressed");
 			resetMap(true,true,true);
-			break;
-		case R.id.updateMapCamera:
-			Log.v("onOptionsItemSelected","Change update / do not update camera button pressed");
-			moveCamera = !moveCamera;
-			if (moveCamera) gotoCurrentLocation();
-			refreshMenuItems();
 			break;
 		case R.id.showCurrentLocation:
 			Log.v("onOptionsItemSelected","Show / do not show current location button pressed");
@@ -207,11 +202,6 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			Log.v("onOptionsItemSelected","Change map type to Terrain");
 			changeMapType(GoogleMap.MAP_TYPE_TERRAIN);
 			break;
-		case R.id.doneButton:
-			Log.v("onOptionsItemSelected","Done button pressed");
-			datasource.done(runName);
-			startRunStatistics();
-			break;
 		default:
 			break;
 		}
@@ -229,7 +219,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		super.onStop();
 		Log.i("onStop","App stopping. Saving settings in the MapStateManager.");
 		MapStateManager mgr = new MapStateManager(this);
-		mgr.saveUserState(myMap, showCurrentLocation, moveCamera, runAgain);
+		mgr.saveUserState(myMap, showCurrentLocation, runAgain);
 		if (myLocationClient != null) myLocationClient.disconnect();
 	}
 
@@ -240,7 +230,6 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		MapStateManager mgr = new MapStateManager(this);
 		if (mgr.checkSavedStatus()) {
 			showCurrentLocation = mgr.getShowCurrentPosition();
-			moveCamera = mgr.getMoveCamera();
 			runAgain = mgr.getRunState();
 			changeMapType(mgr.getMapType());
 		}
@@ -424,10 +413,12 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 		if (resetLocations){
 			Log.v("resetMap","Resetting locations");
+			datasource.deleteAllRunEntries(runName);
 			listLocation = new LinkedList<Location>();
 			ranger = new DistanceFinder(useMetric);
 			markerStrings = new LinkedList<String[]>();
 			boundsBuilder = LatLngBounds.builder();
+			datasource.setRunName(runName);
 		}
 	}
 

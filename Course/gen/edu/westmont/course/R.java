@@ -200,7 +200,7 @@ containing a value of this type.
         public static final int button1=0x7f050008;
         public static final int button2=0x7f05000b;
         public static final int button3=0x7f05000c;
-        public static final int doneButton=0x7f050023;
+        public static final int doneButton=0x7f050022;
         public static final int gps_license_text=0x7f050005;
         public static final int graph=0x7f05000e;
         public static final int hybrid=0x7f050004;
@@ -208,10 +208,10 @@ containing a value of this type.
         public static final int item1=0x7f05001a;
         public static final int list_content=0x7f050017;
         public static final int map=0x7f05000d;
-        public static final int mapTypeHybrid=0x7f050022;
-        public static final int mapTypeNormal=0x7f05001f;
-        public static final int mapTypeSatellite=0x7f050020;
-        public static final int mapTypeTerrain=0x7f050021;
+        public static final int mapTypeHybrid=0x7f050021;
+        public static final int mapTypeNormal=0x7f05001e;
+        public static final int mapTypeSatellite=0x7f05001f;
+        public static final int mapTypeTerrain=0x7f050020;
         public static final int new_run1=0x7f050007;
         public static final int new_run2=0x7f05000a;
         public static final int none=0x7f050000;
@@ -230,7 +230,6 @@ containing a value of this type.
         public static final int tv_text4=0x7f050015;
         public static final int tv_text5=0x7f050016;
         public static final int tv_title=0x7f050011;
-        public static final int updateMapCamera=0x7f05001e;
     }
     public static final class layout {
         public static final int activity_gplicense=0x7f030000;

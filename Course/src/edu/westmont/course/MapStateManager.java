@@ -11,7 +11,6 @@ public class MapStateManager {
 	private static final String DATASAVED = "DATASAVED";
 	private static final String MAPTYPE = "MAPTYPE";
 	private static final String SHOWCURRENT = "SHOWCURRENT";
-	private static final String MOVECAMERA = "MOVECAMERA";
 	private static final String RUNAGAIN = "RUNAGAIN";
 	private static final String PREFS_NAME = "mapState";
 	private SharedPreferences mapStatePrefs;
@@ -21,13 +20,12 @@ public class MapStateManager {
 		Log.i("MapStateManager","Created MapStateManager to store the preferences of the DrawMap class.");
 	}
 
-	public void saveUserState(GoogleMap map, boolean showCurrentLocation, boolean moveCamera, boolean runAgain){
+	public void saveUserState(GoogleMap map, boolean showCurrentLocation, boolean runAgain){
 		Log.i("saveUserState","Saving the state of the map in the MapStateManager.");
 		SharedPreferences.Editor editor = mapStatePrefs.edit();
 		CameraPosition position = map.getCameraPosition();
 		editor.putInt(MAPTYPE, map.getMapType());
 		editor.putBoolean(SHOWCURRENT, showCurrentLocation);
-		editor.putBoolean(MOVECAMERA, moveCamera);
 		editor.putBoolean(RUNAGAIN, runAgain);
 		editor.putBoolean(DATASAVED, true);
 		editor.commit();
@@ -46,11 +44,6 @@ public class MapStateManager {
 	public boolean getShowCurrentPosition(){
 		Log.v("getShowCurrentPosition","Return the saved boolean of whether to show the current position.");
 		return mapStatePrefs.getBoolean(SHOWCURRENT, false);
-	}
-
-	public boolean getMoveCamera(){
-		Log.v("getMoveCamera","Return the boolean of whether to move the camera.");
-		return mapStatePrefs.getBoolean(MOVECAMERA, true);
 	}
 
 	public boolean getRunState(){
