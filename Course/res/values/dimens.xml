@@ -6,5 +6,6 @@
     <dimen name="list_horizontal_margin">20dp</dimen>
     <dimen name="list_vertical_margin">10dp</dimen>
     <dimen name="big_text">22sp</dimen>
+    <dimen name="small_text">14sp</dimen>
 
 </resources>

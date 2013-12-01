@@ -1,64 +1,74 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".RunStatistics" 
-    android:id = "@+id/graph"
-    android:orientation="vertical"
-    android:background = "#000000">
-    
+    tools:context=".RunStatistics" >
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="#191919"
         style="?android:attr/buttonBarStyle"
-        android:background="#191919">
-        
-        <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/show_stats"
-        android:onClick="showStats"
-        style="?android:attr/buttonBarButtonStyle"
-        android:textColor="#ffffff"/>
-        
-        <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_graph_altitude"
-        android:onClick="graphAltitude"
-        style="?android:attr/buttonBarButtonStyle"
-        android:textColor="#ffffff"/>
-        
-        <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_graph_speed"
-        android:onClick="graphSpeed"
-        style="?android:attr/buttonBarButtonStyle"
-        android:textColor="#ffffff"/>
-        
-        <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/show_older_times"
-        android:onClick="showOlderTimes"
-        style="?android:attr/buttonBarButtonStyle"
-        android:textColor="#ffffff"/>
+        android:orientation="horizontal" >
 
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:onClick="showStats"
+            android:text="@string/show_stats"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/small_text" />
+
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:onClick="graphAltitude"
+            android:text="@string/button_graph_altitude"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/small_text" />
+
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:onClick="graphSpeed"
+            android:text="@string/button_graph_speed"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/small_text" />
+
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="showOlderTimes"
+            android:text="@string/show_older_times"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/small_text"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin" />
     </LinearLayout>
-    
-    <TextView 
-     android:id = "@+id/stats"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_marginLeft="10dip"
-     android:layout_marginRight="5dip"
-     android:textSize="20dip"/>
-    
-    
+
+    <TextView
+        android:id="@+id/stats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="5dip"
+        android:textSize="20dip" />
+
 </LinearLayout>

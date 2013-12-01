@@ -156,6 +156,7 @@ containing a value of this type.
         public static final int big_text=0x7f070004;
         public static final int list_horizontal_margin=0x7f070002;
         public static final int list_vertical_margin=0x7f070003;
+        public static final int small_text=0x7f070005;
     }
     public static final class drawable {
         public static final int common_signin_btn_icon_dark=0x7f020000;
