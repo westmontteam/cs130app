@@ -58,8 +58,6 @@
 
         <!-- CREDIT TO http://www.vogella.com for some of this activity code -->
   
-        <activity android:name="edu.westmont.course.LocationChanger" />
-        <activity android:name="edu.westmont.course.DistanceFinder" />
         <activity
             android:name="edu.westmont.course.RunStatistics"
             android:label="@string/title_activity_run_statistics"

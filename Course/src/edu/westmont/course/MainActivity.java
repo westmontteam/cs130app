@@ -1,5 +1,7 @@
 package edu.westmont.course;
 
+import java.util.LinkedList;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 import android.view.View.OnClickListener;
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -17,11 +20,16 @@ public class MainActivity extends Activity implements OnClickListener {
 	public final static String USE_METRIC = "edu.westmont.course.MEASUREMENT";
 	private boolean useMetric = false;
 	protected Menu menuBar;
+	private PositionsDataSource datasource;
+	private LinkedList<String> runList = new LinkedList<String>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		datasource = new PositionsDataSource(this);
+		datasource.open();
+		runList.addAll(datasource.getAllRuns());
 		Log.i("MainActivity","Welcome to Course!");
 	}
 
@@ -45,15 +53,17 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	public void openNewMap(View view){
 		Log.i("MainActivity","Creating intent and starting DrawMap activity with a brand new run; do not display another run concurrently.");
-		Intent intent = new Intent(this, DrawMap.class);
 		EditText editText = (EditText) findViewById(R.id.new_run1);
 		String runName = editText.getText().toString();		
 		if (runName.length() > 0) {
 			runName = sanitizeInput(runName);
-			intent.putExtra(RUN_NAME, runName);
-			intent.putExtra(COMPETE_NAME, "");
-			intent.putExtra(USE_METRIC, useMetric);
-			startActivity(intent);
+			if ((runName.length() > 0) && (verifyRunIsUnique(runName))) {
+				Intent intent = new Intent(this, DrawMap.class);
+				intent.putExtra(RUN_NAME, runName);
+				intent.putExtra(COMPETE_NAME, "");
+				intent.putExtra(USE_METRIC, useMetric);
+				startActivity(intent);
+			}
 		} else Log.e("MainActivity","Error: You must enter a run name in order to create a new route.");
 	}
 
@@ -62,8 +72,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		EditText editText = (EditText) findViewById(R.id.new_run2);
 		String runName = editText.getText().toString();		
 		if (runName.length() > 0) {
-			Log.v("MainActivity","Starting openCompeteMap with a run name of " + runName);
-			openCompeteMap(view);
+			runName = sanitizeInput(runName);
+			if ((runName.length() > 0) && (verifyRunIsUnique(runName))) openCompeteMap(view);
 		} else Log.e("MainActivity","Error: You must enter text into the TextEdit field in order to create a new run.");
 	}
 
@@ -71,22 +81,35 @@ public class MainActivity extends Activity implements OnClickListener {
 		Log.i("MainActivity","Creating intent and starting DrawMap activity for Competitive view.");
 		Intent intent = new Intent(this, List_Activity.class);
 		EditText editText = (EditText) findViewById(R.id.new_run2);
-		String runName = editText.getText().toString();		
-		if (runName.length() > 0) runName = sanitizeInput(runName);
+		String runName = "";
+		if (view.getId() != R.id.button3) {
+			runName = editText.getText().toString();		
+			if (runName.length() > 0) runName = sanitizeInput(runName);
+		}
 		intent.putExtra(RUN_NAME, runName);
 		intent.putExtra(USE_METRIC, useMetric);
 		startActivity(intent);
 	}
 
-	public String sanitizeInput(String runName){
+	private boolean verifyRunIsUnique(String name){
+		if (runList.contains(name)) {
+			Log.e("MainActivity","Error: Database already has a route using the name " + name);
+			Toast.makeText(this,"That name is already being used. Try another name.", Toast.LENGTH_LONG).show();
+			return false;
+		}
+		return true;
+	}
+
+	private String sanitizeInput(String runName){
 		Log.v("MainActivity","Cleaning up the string in the TextEdit to prevent database errors.");
 		runName = runName.trim();
+		if (runName.length() > 0) {
+			//if the first thing in the string is a number, this replaces it with an _. (SQLite can't handle numbers first) 
+			if (runName.substring(0, 1).matches("[0-9]")) runName = "_" + runName.substring(1);
 
-		//if the first thing in the string is a number, this replaces it with an _. (SQLite can't handle numbers first) 
-		if (runName.substring(0, 1).matches("[0-9]")) runName = "_" + runName.substring(1);
-
-		//replaces anything that is not a letter or a number with an underscore.
-		runName = runName.replaceAll("[^[a-zA-Z_0-9]]", "_");
+			//replaces anything that is not a letter or a number with an underscore.
+			runName = runName.replaceAll("[^[a-zA-Z_0-9]]", "_");
+		}
 		return runName;
 	}
 
