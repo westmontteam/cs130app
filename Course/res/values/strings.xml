@@ -35,6 +35,9 @@
     <string name="show_older_times">Comparison</string>
     <string name="use_metric">Distances in meters, km</string>
     <string name="use_imperial">Distances in feet, mi</string>
-        <string name="quitApp">Exit App</string>
+    <string name="quitApp">Exit App</string>
+    <string name="deleteThis">Delete This</string>
+    <string name="done">Done</string>
+    <string name="deleteMenuName">Delete Saved Routes</string>
 
 </resources>

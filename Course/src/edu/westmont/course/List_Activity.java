@@ -2,7 +2,6 @@ package edu.westmont.course;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
