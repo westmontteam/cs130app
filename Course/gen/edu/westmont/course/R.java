@@ -196,34 +196,33 @@ containing a value of this type.
         public static final int TextView02=0x7f050013;
         public static final int TextView03=0x7f050015;
         public static final int TextView04=0x7f050016;
-        public static final int action_license=0x7f050020;
-        public static final int action_settings=0x7f05001e;
-        public static final int action_use_metric=0x7f05001f;
+        public static final int action_license=0x7f05001f;
+        public static final int action_use_metric=0x7f05001e;
         public static final int button1=0x7f050009;
         public static final int button2=0x7f05000c;
         public static final int button3=0x7f05000d;
-        public static final int doneButton=0x7f05002a;
+        public static final int doneButton=0x7f050029;
         public static final int gps_license_text=0x7f050006;
         public static final int graph=0x7f05000f;
         public static final int hybrid=0x7f050004;
         public static final int imageView1=0x7f050017;
-        public static final int item1=0x7f050021;
+        public static final int item1=0x7f050020;
         public static final int linearLayout1=0x7f050011;
         public static final int linearLayout2=0x7f050014;
         public static final int map=0x7f05000e;
-        public static final int mapTypeHybrid=0x7f050029;
-        public static final int mapTypeNormal=0x7f050026;
-        public static final int mapTypeSatellite=0x7f050027;
-        public static final int mapTypeTerrain=0x7f050028;
+        public static final int mapTypeHybrid=0x7f050028;
+        public static final int mapTypeNormal=0x7f050025;
+        public static final int mapTypeSatellite=0x7f050026;
+        public static final int mapTypeTerrain=0x7f050027;
         public static final int new_run1=0x7f050008;
         public static final int new_run2=0x7f05000b;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int resetButton=0x7f050023;
+        public static final int resetButton=0x7f050022;
         public static final int satellite=0x7f050002;
-        public static final int showCurrentLocation=0x7f050024;
+        public static final int showCurrentLocation=0x7f050023;
         public static final int stats=0x7f050010;
-        public static final int stopButton=0x7f050022;
+        public static final int stopButton=0x7f050021;
         public static final int terrain=0x7f050003;
         public static final int textView1=0x7f050005;
         public static final int textViewMain1=0x7f050007;
@@ -234,7 +233,7 @@ containing a value of this type.
         public static final int tv_text4=0x7f05001c;
         public static final int tv_text5=0x7f05001d;
         public static final int tv_title=0x7f050018;
-        public static final int updateMapCamera=0x7f050025;
+        public static final int updateMapCamera=0x7f050024;
     }
     public static final class layout {
         public static final int activity_draw_map=0x7f030000;
@@ -247,11 +246,9 @@ containing a value of this type.
         public static final int list_menu=0x7f030007;
     }
     public static final class menu {
-        public static final int draw_map=0x7f090000;
-        public static final int main=0x7f090001;
-        public static final int map_menu=0x7f090002;
-        public static final int run_statistics=0x7f090003;
-        public static final int show_location=0x7f090004;
+        public static final int main=0x7f090000;
+        public static final int map_menu=0x7f090001;
+        public static final int run_statistics=0x7f090002;
     }
     public static final class string {
         public static final int action_home=0x7f06001c;

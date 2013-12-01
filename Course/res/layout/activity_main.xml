@@ -76,7 +76,7 @@
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="openCompeteMap"
+            android:onClick="openCompeteAndRunMap"
             android:text="@string/button_draw_map"
             android:textColor="#CCFFFF" />
     </LinearLayout>

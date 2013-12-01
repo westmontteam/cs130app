@@ -1,26 +1,27 @@
 package edu.westmont.course;
 
+import android.util.Log;
 import com.jjoe64.graphview.GraphViewDataInterface;
 
 public class Point implements GraphViewDataInterface {
 	public double x;
 	public double y;
-	
+
 	public Point(double x, double y){
 		this.x = x;
 		this.y = y;
+		Log.i("Point","Create Point object with x,y values of " + String.valueOf(x) + " and " + String.valueOf(y));
 	}
 
 	@Override
 	public double getX() {
-		// TODO Auto-generated method stub
+		Log.v("getX","Returning x vith the value of " + String.valueOf(x));
 		return x;
 	}
 
 	@Override
 	public double getY() {
-		// TODO Auto-generated method stub
+		Log.v("getY","Returning y vith the value of " + String.valueOf(y));
 		return y;
 	}
-
 }
