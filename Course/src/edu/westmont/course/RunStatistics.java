@@ -112,23 +112,33 @@ public class RunStatistics extends Activity {
 	}
 
 	public void showStats(View view){
-		DistanceFinder ranger = new DistanceFinder(useMetric);
-		StringBuilder message = new StringBuilder();
 		Log.v("showStats","Displaying Statistics");
+		StringBuilder builder = new StringBuilder();
+		builder = statisticsStringMaker(runName, builder);
+		builder = statisticsStringMaker(competeName, builder);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
-		Log.v("showStats","Constructing TextView with a runName of " + runName);
+		Log.v("showStats","Constructing TextView");
 		TextView textView = new TextView(getBaseContext());
-		message.append("Total time: " + ranger.getElapsedTimeString(datasource.totalTime(runName)*1000) + "\n");
-		message.append("Highest speed: " + ranger.getSpeedString(datasource.highest(runName,MySQLiteHelper.COLUMN_SPEED)) + "\n");
-		message.append("Highest Altitude: " + ranger.getAltitudeString(datasource.highest(runName, MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) + "\n");
-		message.append("Total distance: " + ranger.getDistanceString(datasource.totalDistance(runName)) + "\n");
-		message.append("Average speed: " + ranger.getSpeedString(datasource.averageSpeed(runName)));
-		Log.v("Stats","setting Text.");
-		textView.setText(message.toString(), null);
-		Log.v("showStats","adding view");
+		textView.setText(builder.toString(), null);
+		Log.v("showStats","Adding view and displaying statistics.");
 		layout.removeViewAt(1);
 		layout.addView(textView,1);
 	}
+	
+	private StringBuilder statisticsStringMaker(String route, StringBuilder message) {
+		if (route.length() > 0) {
+			Log.i("statisticsStringMaker","Adding statistics for " + route);
+			DistanceFinder ranger = new DistanceFinder(useMetric);
+			message.append("For Route " + route + ":\n");
+			message.append("Total time: " + ranger.getElapsedTimeString(datasource.totalTime(route)*1000) + "\n");
+			message.append("Highest speed: " + ranger.getSpeedString(datasource.highest(route,MySQLiteHelper.COLUMN_SPEED)) + "\n");
+			message.append("Highest Altitude: " + ranger.getAltitudeString(datasource.highest(route, MySQLiteHelper.COLUMN_HIGHEST_ALTITUDE)) + "\n");
+			message.append("Total distance: " + ranger.getDistanceString(datasource.totalDistance(route)) + "\n");
+			message.append("Average speed: " + ranger.getSpeedString(datasource.averageSpeed(route)) + "\n\n");
+		}
+		return message;
+	}
+	
 
 	public void graphAltitude(View view){
 		Log.v("graphAltitude","Graphing Altitude");
