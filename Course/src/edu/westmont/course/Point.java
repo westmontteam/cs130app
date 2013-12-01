@@ -15,13 +15,13 @@ public class Point implements GraphViewDataInterface {
 
 	@Override
 	public double getX() {
-		Log.v("getX","Returning x vith the value of " + String.valueOf(x));
+		Log.v("Point","Returning x vith the value of " + String.valueOf(x));
 		return x;
 	}
 
 	@Override
 	public double getY() {
-		Log.v("getY","Returning y vith the value of " + String.valueOf(y));
+		Log.v("Point","Returning y vith the value of " + String.valueOf(y));
 		return y;
 	}
 }

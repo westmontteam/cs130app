@@ -28,35 +28,35 @@ public class LocationChanger implements Iterator<Location> {
 	}
 
 	public void setLatLng(double lat, double lng){
-		Log.i("setLatLng","Set the latitude and longitude to " + String.valueOf(lat) + ", " + String.valueOf(lng));
+		Log.i("LocationChanger","Set the latitude and longitude to " + String.valueOf(lat) + ", " + String.valueOf(lng));
 		latitude = lat;
 		longitude = lng;
 	}
 
 	@Override
 	public boolean hasNext() {
-		Log.v("hasNext","Iterator always has another object to return.");
+		Log.v("LocationChanger","Iterator always has another object to return.");
 		return true;
 	}
 
 	public Integer getNameInt(){
-		Log.i("getNameInt","Retturn the current name of the LocationChanger as an Integer, which is " + String.valueOf(nameInt));
+		Log.i("LocationChanger","Retturn the current name of the LocationChanger as an Integer, which is " + String.valueOf(nameInt));
 		return nameInt;
 	}
 
 	public String getName(){
-		Log.i("getName","Retturn the current name of the LocationChanger as a String, which is " + String.valueOf(nameInt));
+		Log.i("LocationChanger","Retturn the current name of the LocationChanger as a String, which is " + String.valueOf(nameInt));
 		return nameInt.toString();
 	}
 
 	public LatLng getLatLng(){
-		Log.i("getLatLng","Return the current location as a LatLng object.");
+		Log.i("LocationChanger","Return the current location as a LatLng object.");
 		return new LatLng(latitude, longitude);
 	}
 
 	@Override
 	public Location next() {
-		Log.i("next","Return the next Location as a Location object.");
+		Log.i("LocationChanger","Return the next Location as a Location object.");
 		Location loc = new Location(provider);
 		loc.setLongitude(longitude);
 		loc.setLatitude(latitude);
@@ -76,13 +76,13 @@ public class LocationChanger implements Iterator<Location> {
 
 	@Override
 	public void remove() {
-		Log.i("remove","Set the latitude and longitude for the LocationChanger to 0, 0.");
+		Log.i("LocationChanger","Set the latitude and longitude for the LocationChanger to 0, 0.");
 		latitude = 0;
 		longitude = 0;
 	}
 
 	public LinkedList<Location> getBatch(int number){
-		Log.i("getBatch","Return a batch (LinkedList) of " + String.valueOf(number) + " Location objects.");
+		Log.i("LocationChanger","Return a batch (LinkedList) of " + String.valueOf(number) + " Location objects.");
 		LinkedList<Location> output = new LinkedList<Location>();
 		for (int i = 0; i < number; i++){
 			output.add(next());

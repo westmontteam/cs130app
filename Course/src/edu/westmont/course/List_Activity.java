@@ -25,15 +25,15 @@ public class List_Activity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_menu);
-		Log.i("onCreate","Creating List_Activity class. Loading database...");
+		Log.i("List_Activity","Creating List_Activity class. Loading database...");
 		datasource = new PositionsDataSource(this);
 		datasource.open();
-		Log.i("onCreate","Getting the intent for the List_Activity class.");
+		Log.i("List_Activity","Getting the intent for the List_Activity class.");
 		Intent intent = getIntent();
 		newRunName = intent.getStringExtra(MainActivity.RUN_NAME);
 		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
 		runList.addAll(datasource.getAllRuns());
-		Log.i("onCreate","Got the data from the database.  There are " + String.valueOf(runList.size()) + " items on the list.");
+		Log.i("List_Activity","Got the data from the database.  There are " + String.valueOf(runList.size()) + " items on the list.");
 		setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.list_content, runList));
 	}
 
@@ -44,7 +44,7 @@ public class List_Activity extends ListActivity {
 		intent.putExtra(MainActivity.RUN_NAME, newRunName);
 		intent.putExtra(MainActivity.USE_METRIC, useMetric);
 		intent.putExtra(MainActivity.COMPETE_NAME, runList.get(position));
-		Log.i("onListItemClick","Starting activity DrawMap with the compete name of " + runList.get(position));
+		Log.i("List_Activity","Starting activity DrawMap with the compete name of " + runList.get(position));
 		startActivity(intent);
 	}
 
@@ -57,7 +57,7 @@ public class List_Activity extends ListActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			Log.v("getView","Using custom list adaterr to display " + runList.get(position));
+			Log.v("List_Activity","Using custom list adaterr to display " + runList.get(position));
 			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View row = inflater.inflate(R.layout.list_item, parent, false); 
 			TextView tv = (TextView) row.findViewById(R.id.list_content);

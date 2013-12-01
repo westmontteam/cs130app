@@ -12,12 +12,12 @@ public class GPLicense extends Activity {
 	protected void onCreate(Bundle b){
 		super.onCreate(b);
 		setContentView(R.layout.activity_gplicense);
-		Log.i("onCreate","Started GPLicense class.");
+		Log.i("GPLicense","Started GPLicense class.");
 		showLicense();
 	}
 
 	private void showLicense(){
-		Log.i("showLicense","Getting the Google Play License from the Google Play Services library.");
+		Log.i("GPLicense","Getting the Google Play License from the Google Play Services library.");
 		String license = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
 		TextView tv = (TextView) findViewById(R.id.gps_license_text);
 		if (license != null) tv.setText(license);

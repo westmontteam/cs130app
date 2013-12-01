@@ -13,12 +13,12 @@ public class Position extends Location {
 	}
 
 	public long getId() {
-		Log.i("getId","Getting the ID of the Position object: " + String.valueOf(storedID));
+		Log.i("Position","Getting the ID of the Position object: " + String.valueOf(storedID));
 		return storedID;
 	}
 
 	public void setId(long id) {
-		Log.i("setId","Setting the ID of the Position object to " + String.valueOf(id));
+		Log.i("Position","Setting the ID of the Position object to " + String.valueOf(id));
 		this.storedID = id;
 	}
 }

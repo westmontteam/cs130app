@@ -37,21 +37,21 @@ public class RunStatistics extends Activity {
 		Log.i("onCreate","Started RunStatistics. The Run is--" + runName + "-- and the competeName is--" + competeName + "--");
 		datasource = new PositionsDataSource(this);
 		datasource.open();
-		Log.i("onCreate","Gathering data from DB for " + runName);
+		Log.i("RunStatistics","Gathering data from DB for " + runName);
 		if (runName.length() > 0) runPositions = datasource.getCurrentRun(runName);
-		Log.i("onCreate","Gathering data from DB for " + competeName);
+		Log.i("RunStatistics","Gathering data from DB for " + competeName);
 		if (competeName.length() > 0) competePositions = datasource.getCurrentRun(competeName);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.run_statistics, menu);
-		Log.v("onCreateOptionsMenu","Created menu bar in RunStatistics activity.");
+		Log.v("RunStatistics","Created menu bar in RunStatistics activity.");
 		return true;
 	}
 
 	private double convertSpeed(double value){
-		Log.i("convertSpeed","Converting the speed " + String.valueOf(value) + " to kph or mph.");
+		Log.i("RunStatistics","Converting the speed " + String.valueOf(value) + " to kph or mph.");
 		if (useMetric){
 			return value*metersToKph;
 		}
@@ -59,7 +59,7 @@ public class RunStatistics extends Activity {
 	}
 
 	private GraphViewSeries getGraphViewSeries(List<Position> input, String graphType, String lineName, int color) {
-		Log.v("getGraphViewSeries","Creating graph view for " + lineName);
+		Log.v("RunStatistics","Creating graph view for " + lineName);
 		long startTime = 0;
 		if (input.size()>0){
 			startTime = input.get(0).getTime();
@@ -75,12 +75,12 @@ public class RunStatistics extends Activity {
 		}
 		GraphViewSeries gvSeries = null;
 		if (points.length > 0) gvSeries = new GraphViewSeries(lineName, new GraphViewSeriesStyle(color, 5),points);
-		Log.v("getGraphViewSeries","Successfully created graph view for " + lineName);
+		Log.v("RunStatistics","Successfully created graph view for " + lineName);
 		return gvSeries;
 	}
 
 	private void displayGraph(String type){
-		Log.i("displayGraph","Display the graph with the type of " + type);
+		Log.i("RunStatistics","Display the graph with the type of " + type);
 		String yLabel = "";
 		if (type.equals("Altitude")) {
 			if (useMetric) yLabel = " (meters)";
@@ -92,8 +92,7 @@ public class RunStatistics extends Activity {
 		}
 		GraphViewSeries runSeries = getGraphViewSeries(runPositions, type, runName, Color.BLUE);
 		GraphViewSeries competeSeries = getGraphViewSeries(competePositions, type, competeName, Color.RED);
-		Log.v("displayGraph","Made it past the point initialization. There are: " + competePositions.size() + " points");
-
+		Log.v("RunStatistics","Made it past the point initialization. There are: " + competePositions.size() + " points");
 		GraphView graphView = new LineGraphView(this,type+yLabel);
 		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
 			public String formatLabel(double value, boolean isValueX) {
@@ -112,22 +111,22 @@ public class RunStatistics extends Activity {
 	}
 
 	public void showStats(View view){
-		Log.v("showStats","Displaying Statistics");
+		Log.v("RunStatistics","Displaying Statistics");
 		StringBuilder builder = new StringBuilder();
 		builder = statisticsStringMaker(runName, builder);
 		builder = statisticsStringMaker(competeName, builder);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph);
-		Log.v("showStats","Constructing TextView");
+		Log.v("RunStatistics","Constructing TextView");
 		TextView textView = new TextView(getBaseContext());
 		textView.setText(builder.toString(), null);
-		Log.v("showStats","Adding view and displaying statistics.");
+		Log.v("RunStatistics","Adding view and displaying statistics.");
 		layout.removeViewAt(1);
 		layout.addView(textView,1);
 	}
 	
 	private StringBuilder statisticsStringMaker(String route, StringBuilder message) {
 		if (route.length() > 0) {
-			Log.i("statisticsStringMaker","Adding statistics for " + route);
+			Log.i("RunStatistics","Adding statistics for " + route);
 			DistanceFinder ranger = new DistanceFinder(useMetric);
 			message.append("For Route " + route + ":\n");
 			message.append("Total time: " + ranger.getElapsedTimeString(datasource.totalTime(route)*1000) + "\n");
@@ -141,17 +140,17 @@ public class RunStatistics extends Activity {
 	
 
 	public void graphAltitude(View view){
-		Log.v("graphAltitude","Graphing Altitude");
+		Log.v("RunStatistics","Graphing Altitude");
 		displayGraph("Altitude");
 	}
 
 	public void graphSpeed(View view){
-		Log.v("graphSpeed","Graphing Speed");
+		Log.v("RunStatistics","Graphing Speed");
 		displayGraph("Speed");
 	}
 
 	public void showOlderTimes(View view){
-		Log.v("showOlderTimes","Displaying previous times");
+		Log.v("RunStatistics","Displaying previous times");
 		Point[] points = datasource.timeVsNumber(runName);
 		GraphViewSeries exampleSeries = new GraphViewSeries(points);
 		GraphView graphView = new LineGraphView(this,"Previous Times");

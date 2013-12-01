@@ -17,7 +17,7 @@ public class UnitManager {
 	}
 
 	public void saveUserState(boolean useMetric){
-		Log.i("saveUserState","Saving useMetric preference to " + String.valueOf(useMetric));
+		Log.i("UnitManager","Saving useMetric preference to " + String.valueOf(useMetric));
 		SharedPreferences.Editor editor = unitPrefs.edit();
 		editor.putBoolean(USEMETRIC, useMetric);
 		editor.putBoolean(DATASAVED, true);
@@ -25,12 +25,12 @@ public class UnitManager {
 	}
 
 	public boolean checkSavedStatus(){
-		Log.v("checkSavedStatus","Checking if data has been stored in this object.");
+		Log.v("UnitManager","Checking if data has been stored in this object.");
 		return unitPrefs.getBoolean(DATASAVED, false);
 	}
 
 	public boolean getUseMetric(){
-		Log.v("getUseMetric","Return the stored value of the UnitManager object.");
+		Log.v("UnitManager","Return the stored value of the UnitManager object.");
 		return unitPrefs.getBoolean(USEMETRIC, false);
 	}
 }
