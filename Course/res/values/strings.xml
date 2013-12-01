@@ -2,10 +2,9 @@
 <resources>
 
     <string name="app_name">Course</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world! We\'re working on this.</string>
+    <string name="activity_route_list">Select a route to view</string>
+    <string name="activity_delete_route_list">Select a route to delete</string>
     <string name="action_home">Return to Home Screen</string>
-    <string name="title_activity_show_location">ShowLocationActivity</string>
     <string name="button_get_location">Get my location now</string>
     <string name="google_play_error_message">Unable to connect to Google Play Services.  Sorry about that.</string>
     <string name="menu_normal">Map Type: Normal</string>
@@ -16,7 +15,7 @@
     <string name="stay_put">Do Not Update Map</string>
     <string name="show_current">Show Current Position</string>
     <string name="show_all">Show Whole Course</string>
-    <string name="title_activity_draw_map">DrawMap</string>
+    <string name="title_activity_draw_map">Route Map</string>
     <string name="new_run_name">Create a new route</string>
     <string name="compare_run_name">Compete on an existing route</string>
     <string name="view_run_name">View existing routes</string>

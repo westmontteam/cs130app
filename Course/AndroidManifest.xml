@@ -57,14 +57,7 @@
         </activity>
 
         <!-- CREDIT TO http://www.vogella.com for some of this activity code -->
-        <activity
-            android:name="edu.westmont.course.ShowLocationActivity"
-            android:label="@string/title_activity_show_location"
-            android:parentActivityName="edu.westmont.course.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.westmont.course.MainActivity" />
-        </activity>
+  
         <activity android:name="edu.westmont.course.LocationChanger" />
         <activity android:name="edu.westmont.course.DistanceFinder" />
         <activity
@@ -77,7 +70,7 @@
         </activity>
         <activity
             android:name="edu.westmont.course.List_Activity"
-            android:label="list_activity_name"
+            android:label="@string/activity_route_list"
             android:parentActivityName="edu.westmont.course.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

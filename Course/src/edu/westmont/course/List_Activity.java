@@ -1,13 +1,19 @@
 package edu.westmont.course;
 
 import java.util.LinkedList;
+import java.util.List;
+
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class List_Activity extends ListActivity {
 
@@ -29,7 +35,7 @@ public class List_Activity extends ListActivity {
 		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
 		runList.addAll(datasource.getAllRuns());
 		Log.i("onCreate","Got the data from the database.  There are " + String.valueOf(runList.size()) + " items on the list.");
-		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, runList));
+		setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.list_content, runList));
 	}
 
 	@Override
@@ -41,5 +47,24 @@ public class List_Activity extends ListActivity {
 		intent.putExtra(MainActivity.COMPETE_NAME, runList.get(position));
 		Log.i("onListItemClick","Starting activity DrawMap with the compete name of " + runList.get(position));
 		startActivity(intent);
+	}
+	
+	private class MyAdapter extends ArrayAdapter<String> {
+
+		public MyAdapter(Context context, int resource, int textViewResourceId,
+				List<String> objects) {
+			super(context, resource, textViewResourceId, objects);
+
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View row = inflater.inflate(R.layout.list_item, parent, false); 
+			TextView tv = (TextView) row.findViewById(R.id.list_content);
+			tv.setText(runList.get(position));
+			return row;
+		}
+		
 	}
 }
