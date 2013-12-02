@@ -17,7 +17,7 @@
     <string name="show_all">Show Whole Course</string>
     <string name="title_activity_draw_map">Route Map</string>
     <string name="new_run_name">Create a new route</string>
-    <string name="compare_run_name">Compete on an existing route</string>
+    <string name="compare_run_name">Compete with an existing route</string>
     <string name="view_run_name">View existing routes</string>
     <string name="enter_run_name">Enter new route name</string>
     <string name="button_draw_map">Go!</string>
