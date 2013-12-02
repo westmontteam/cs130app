@@ -1,5 +1,6 @@
 package edu.westmont.course;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import android.app.ListActivity;
@@ -34,6 +35,7 @@ public class List_Activity extends ListActivity {
 		useMetric = intent.getBooleanExtra(MainActivity.USE_METRIC, false);
 		runList.addAll(datasource.getAllRuns());
 		Log.i("List_Activity","Got the data from the database.  There are " + String.valueOf(runList.size()) + " items on the list.");
+		Collections.sort(runList);
 		setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.list_content, runList));
 	}
 

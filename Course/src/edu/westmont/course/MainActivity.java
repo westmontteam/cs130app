@@ -125,11 +125,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
-		if (item.getItemId() == R.id.action_license) {
-			Log.v("MainActivity","Selected options menu item to display Google Play Services License.");
-			showLicense();
-		}
-		else if (item.getItemId() == R.id.action_use_metric) {
+		if (item.getItemId() == R.id.action_use_metric) {
 			Log.v("MainActivity","Switching the measurement system that will be used in this app.  This setting will be passed to each other activity in the application.");
 			useMetric = !useMetric;
 			refreshMenuItems();
@@ -138,6 +134,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			Log.v("MainActivity","Delete button pressed. Loading DeleteList activity.");
 			Intent intent = new Intent(this, DeleteList.class);
 			startActivity(intent);
+		}
+		else if (item.getItemId() == R.id.action_license) {
+			Log.v("MainActivity","Selected options menu item to display Google Play Services License.");
+			showLicense();
 		}
 		return super.onOptionsItemSelected(item);
 	}

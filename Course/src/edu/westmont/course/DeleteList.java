@@ -1,5 +1,6 @@
 package edu.westmont.course;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import android.app.ListActivity;
@@ -31,6 +32,7 @@ public class DeleteList extends ListActivity {
 		datasource = new PositionsDataSource(this);
 		datasource.open();
 		runList.addAll(datasource.getAllRuns());
+		Collections.sort(runList);
 		Log.i("DeleteList","Got the data from the database.  There are " + String.valueOf(runList.size()) + " items on the list.");
 		setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.list_content, runList));
 	}

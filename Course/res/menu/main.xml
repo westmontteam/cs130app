@@ -6,20 +6,14 @@
         android:showAsAction="never"
         android:title="@string/use_imperial"/>
     <item
-        android:id="@+id/action_license"
-        android:orderInCategory="98"
-        android:showAsAction="never"
-        android:title="@string/gp_license"/>
-    <item
         android:id="@+id/action_delete"
-        android:orderInCategory="99"
+        android:orderInCategory="98"
         android:showAsAction="never"
         android:title="@string/deleteMenuName"/>
     <item
-        android:id="@+id/action_exit"
-        android:onClick="exitApp"
-        android:orderInCategory="100"
-        android:title="@string/quitApp"
-        android:titleCondensed="@string/quitApp"/>
+        android:id="@+id/action_license"
+        android:orderInCategory="99"
+        android:showAsAction="never"
+        android:title="@string/gp_license"/>
 
 </menu>

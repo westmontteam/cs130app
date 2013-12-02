@@ -195,9 +195,8 @@ containing a value of this type.
         public static final int ic_point_red=0x7f020021;
     }
     public static final class id {
-        public static final int action_delete=0x7f05001d;
-        public static final int action_exit=0x7f05001e;
-        public static final int action_license=0x7f05001c;
+        public static final int action_delete=0x7f05001c;
+        public static final int action_license=0x7f05001d;
         public static final int action_use_metric=0x7f05001b;
         public static final int button1=0x7f050008;
         public static final int button2=0x7f05000b;
@@ -205,26 +204,26 @@ containing a value of this type.
         public static final int deleteButton=0x7f05001a;
         public static final int delete_check=0x7f050010;
         public static final int delete_list_content=0x7f050011;
-        public static final int doneButton=0x7f050026;
+        public static final int doneButton=0x7f050025;
         public static final int gps_license_text=0x7f050005;
         public static final int graph=0x7f05000e;
         public static final int hybrid=0x7f050004;
         public static final int imageView1=0x7f050012;
         public static final int list_content=0x7f050019;
         public static final int map=0x7f05000d;
-        public static final int mapTypeHybrid=0x7f050025;
-        public static final int mapTypeNormal=0x7f050022;
-        public static final int mapTypeSatellite=0x7f050023;
-        public static final int mapTypeTerrain=0x7f050024;
+        public static final int mapTypeHybrid=0x7f050024;
+        public static final int mapTypeNormal=0x7f050021;
+        public static final int mapTypeSatellite=0x7f050022;
+        public static final int mapTypeTerrain=0x7f050023;
         public static final int new_run1=0x7f050007;
         public static final int new_run2=0x7f05000a;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int resetButton=0x7f050020;
+        public static final int resetButton=0x7f05001f;
         public static final int satellite=0x7f050002;
-        public static final int showCurrentLocation=0x7f050021;
+        public static final int showCurrentLocation=0x7f050020;
         public static final int stats=0x7f05000f;
-        public static final int stopButton=0x7f05001f;
+        public static final int stopButton=0x7f05001e;
         public static final int terrain=0x7f050003;
         public static final int textViewMain1=0x7f050006;
         public static final int textViewMain2=0x7f050009;
