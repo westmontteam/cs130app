@@ -12,18 +12,17 @@
     tools:context=".RunStatistics" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#191919"
-        style="?android:attr/buttonBarStyle"
         android:orientation="horizontal" >
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
             android:onClick="showStats"
             android:text="@string/show_stats"
             android:textColor="#ffffff"
@@ -31,10 +30,9 @@
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
             android:onClick="graphAltitude"
             android:text="@string/button_graph_altitude"
             android:textColor="#ffffff"
@@ -42,33 +40,30 @@
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
             android:onClick="graphSpeed"
             android:text="@string/button_graph_speed"
             android:textColor="#ffffff"
             android:textSize="@dimen/small_text" />
 
-        <Button
+        <!--
+       <Button
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="showOlderTimes"
             android:text="@string/show_older_times"
             android:textColor="#ffffff"
-            android:textSize="@dimen/small_text"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin" />
+            android:textSize="@dimen/small_text" />
+        -->
     </LinearLayout>
 
     <TextView
         android:id="@+id/stats"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="5dip"
-        android:textSize="20dip" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

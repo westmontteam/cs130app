@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -121,6 +122,8 @@ public class RunStatistics extends Activity {
 		textView.setText(builder.toString(), null);
 		Log.v("RunStatistics","Adding view and displaying statistics.");
 		layout.removeViewAt(1);
+		textView.setVerticalScrollbarPosition(TextView.SCROLLBAR_POSITION_DEFAULT);
+		textView.setMovementMethod(new ScrollingMovementMethod());
 		layout.addView(textView,1);
 	}
 	

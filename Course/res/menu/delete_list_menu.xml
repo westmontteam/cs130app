@@ -6,5 +6,5 @@
         android:orderInCategory="1"
         android:showAsAction="ifRoom"
         android:title="@string/done"/>
-   
+
 </menu>

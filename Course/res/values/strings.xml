@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Course</string>
-    <string name="activity_route_list">Select a route to view</string>
+    <string name="activity_route_list">Select a saved route to view</string>
     <string name="activity_delete_route_list">Select the routes to delete</string>
     <string name="action_home">Return to Home Screen</string>
     <string name="button_get_location">Get my location now</string>
