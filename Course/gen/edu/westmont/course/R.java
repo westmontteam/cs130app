@@ -186,15 +186,13 @@ containing a value of this type.
         public static final int ic_check=0x7f020018;
         public static final int ic_home=0x7f020019;
         public static final int ic_launcher=0x7f02001a;
-        public static final int ic_launcher_teal=0x7f02001b;
-        public static final int ic_location=0x7f02001c;
-        public static final int ic_location_teal=0x7f02001d;
-        public static final int ic_plusone_medium_off_client=0x7f02001e;
-        public static final int ic_plusone_small_off_client=0x7f02001f;
-        public static final int ic_plusone_standard_off_client=0x7f020020;
-        public static final int ic_plusone_tall_off_client=0x7f020021;
-        public static final int ic_point=0x7f020022;
-        public static final int ic_point_red=0x7f020023;
+        public static final int ic_location=0x7f02001b;
+        public static final int ic_plusone_medium_off_client=0x7f02001c;
+        public static final int ic_plusone_small_off_client=0x7f02001d;
+        public static final int ic_plusone_standard_off_client=0x7f02001e;
+        public static final int ic_plusone_tall_off_client=0x7f02001f;
+        public static final int ic_point=0x7f020020;
+        public static final int ic_point_red=0x7f020021;
     }
     public static final class id {
         public static final int action_delete=0x7f05001d;
