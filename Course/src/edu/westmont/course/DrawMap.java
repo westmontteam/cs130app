@@ -179,7 +179,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 			resetMap(true,true,true);
 			break;
 		case R.id.showCurrentLocation:
-			Log.v("DrawMap","Show / do not show current location button pressed");
+			Log.v("DrawMap","Show or do not show current location button pressed");
 			showCurrentLocation = !showCurrentLocation;
 			if (showCurrentLocation) useDefaultZoom = true;
 			gotoCurrentLocation();
@@ -315,9 +315,12 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	}
 
 	protected void gotoCurrentLocation(){
-		Log.v("DrawMap","Going to current location");
-		Location location = myLocationClient.getLastLocation();
-		if (location == null) Toast.makeText(this, "Sorry, your current location is not available",Toast.LENGTH_SHORT).show();
+		Log.v("DrawMap","Going to last location that the GPS receidved.");
+		Location location = null;
+		if (myLocationClient != null) location = myLocationClient.getLastLocation();
+		else if (listLocation.size() > 0) location = listLocation.getLast();
+		else if (competeListLocation.size() > 0) location = competeListLocation.getLast();
+		if (location == null) Toast.makeText(this, "Sorry, your last location is not available",Toast.LENGTH_SHORT).show();
 		else gotoLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
 	}
 
