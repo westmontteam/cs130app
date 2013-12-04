@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		return true;
 	}
 
-	private String sanitizeInput(String runName){
+	public String sanitizeInput(String runName){
 		Log.v("MainActivity","Cleaning up the string in the TextEdit to prevent database errors.");
 		runName = runName.trim();
 		if (runName.length() > 0) {
