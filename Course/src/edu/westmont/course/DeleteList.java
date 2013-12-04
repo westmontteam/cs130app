@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * Attribution for parts of this code belongs to Lynda.com, "Building Android Apps with Google Maps API v2" 
+ */
 public class DeleteList extends ListActivity {
 
 	private PositionsDataSource datasource;
@@ -36,14 +39,14 @@ public class DeleteList extends ListActivity {
 		Log.i("DeleteList","Got the data from the database.  There are " + String.valueOf(runList.size()) + " items on the list.");
 		setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.list_content, runList));
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.delete_list_menu, menu);
 		Log.v("DeleteList","Created options menu for DeleteList activity.");
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.deleteButton) {
@@ -56,7 +59,7 @@ public class DeleteList extends ListActivity {
 		closeActivity();
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	private void closeActivity(){
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);

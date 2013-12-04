@@ -39,7 +39,8 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected LocationClient myLocationClient;
 	protected int defaultZoom = 15;
 	protected boolean useDefaultZoom = true;
-	protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
+	//LocationChanger mock object is for testing only
+	//protected LocationChanger lc = new LocationChanger(40.715842,-74.006237);
 	protected boolean useMetric = false;
 	protected DistanceFinder ranger;
 	protected String runName = "";
@@ -62,7 +63,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	protected Menu menuBar;
 
 	/**
-	 * Attribution for this code belongs to Lynda.com, "Building Android Apps with Google Maps API v2" 
+	 * Attribution for parts of this code belongs to Lynda.com, "Building Android Apps with Google Maps API v2" 
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +160,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 	}
 
 	/**
-	 * Credit for this method belongs to lynda.com, "Building Android Apps with Google Maps API v2"
+	 * Credit for assistance with this method goes to lynda.com, "Building Android Apps with Google Maps API v2"
 	 */
 	@Override
 	public boolean onOptionsItemSelected(android.view.MenuItem item) {
@@ -261,6 +262,7 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	/**
 	 * Initiates the map with the purpose of getting a reference to it.
+	 * Attribution for parts of this code belongs to Lynda.com, "Building Android Apps with Google Maps API 
 	 * @return a boolean indicating if the map has been initiated.
 	 */
 	public boolean initMap(){
@@ -324,6 +326,17 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		else gotoLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
 	}
 
+	/**
+	 * Updates the map with a new marker and line and adds the information to the database.
+	 * @param includeDatabase A boolean indicating whether or not to add the location object to the database.
+	 * @param loc The new Location object to be added to the map
+	 * @param df The DistanceFinder object associated with the line, marker, and color
+	 * @param locations The list of Location objecs to which the new Location object should be added
+	 * @param markers The list of markers to which the marker for the new Location should be added
+	 * @param lines The list of lines to which the line for the new Location should be added
+	 * @param strings The list of strings to which the information about the new Location object should be added
+	 * @param color The color for this location object's marker and line
+	 */
 	protected void updateMap(boolean includeDatabase, Location loc, DistanceFinder df, LinkedList<Location> locations, LinkedList<Marker> markers, LinkedList<Polyline> lines, LinkedList<String[]> strings, int color) {
 		if (loc.getAccuracy() < 100) {
 			Log.i("DrawMap","Adding a new Location object to the map.");
@@ -359,10 +372,10 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	/**
 	 * Adds a new marker to the map with the appropriate marker icon.
-	 * @param ll
-	 * @param list
-	 * @param df
-	 * @param type
+	 * @param ll The LatLng object that describes the location to put a marker
+	 * @param list The list of marker objects that this marker should be added to 
+	 * @param df The distance finder object associated with this marker and its list
+	 * @param type The type of this marker, an integer equal to eith Color.BLUE or Color.RED 
 	 */
 	protected void addMarkerToMap(LatLng ll, LinkedList<Marker> list, DistanceFinder df, int type){
 		Log.i("DrawMap","Adding a new marker to the map of the type " + String.valueOf(type));
@@ -382,10 +395,10 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 
 	/**
 	 * Adds a new line to the map with a user-defined color.
-	 * @param a
-	 * @param b
-	 * @param list
-	 * @param color
+	 * @param a The Location from which to draw the line
+	 * @param b The Location to which to draw the line
+	 * @param list The list of Location objects to which to add the Polyline object
+	 * @param color The color of the line
 	 */
 	private void drawLine(Location a, Location b, LinkedList<Polyline> list, int color){
 		Log.i("DrawMap","Drawing a new line on the map.");
@@ -457,8 +470,9 @@ GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnect
 		}
 		if (runAgain){
 			Log.i("DrawMap","Adding location to map and database.");
-			//updateMap(true, loc, ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
-			updateMap(true, lc.next(), ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
+			updateMap(true, loc, ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
+			//Use the LocationChanger mock object when testing only
+			//updateMap(true, lc.next(), ranger, listLocation, listMarker, listLine, markerStrings, Color.BLUE);
 		}
 	}
 

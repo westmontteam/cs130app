@@ -15,6 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * Attribution for parts of this code belongs to Lynda.com, "Building Android Apps with Google Maps API v2" 
+ */
 public class List_Activity extends ListActivity {
 
 	private PositionsDataSource datasource;
