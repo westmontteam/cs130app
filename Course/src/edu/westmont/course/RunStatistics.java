@@ -26,7 +26,8 @@ public class RunStatistics extends Activity {
 	List<Position> competePositions = new ArrayList<Position>();;
 	final private double metersToMph = 2.236936364;
 	final private double metersToKph = 3.6;
-
+	final private double imperialConversion = 3.28084;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,7 +57,15 @@ public class RunStatistics extends Activity {
 		if (useMetric){
 			return value*metersToKph;
 		}
-		return value*metersToMph;
+		else return value*metersToMph;
+	}
+	
+	private double convertAltitude(double value){
+		Log.i("RunStatistics","Converting the altitude " + String.valueOf(value) + " to feet if not using metric.");
+		if (!useMetric){
+			return value*imperialConversion;
+		}
+		else return value;
 	}
 
 	private GraphViewSeries getGraphViewSeries(List<Position> input, String graphType, String lineName, int color) {
@@ -70,8 +79,8 @@ public class RunStatistics extends Activity {
 		for (int i=0; i<input.size(); i++){
 			Position position = input.get(i);
 			x = (position.getTime() - startTime) / 1000;
-			if (graphType.equals("Altitude")) y = (double) position.getAltitude();
-			if (graphType.equals("Speed")) y = (double) position.getSpeed();
+			if (graphType.equals("Altitude")) y = (double) convertAltitude(position.getAltitude());
+			if (graphType.equals("Speed")) y = (double) convertSpeed(position.getSpeed());
 			points[i] = new Point(x,y);
 		}
 		GraphViewSeries gvSeries = null;
@@ -98,7 +107,7 @@ public class RunStatistics extends Activity {
 		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
 			public String formatLabel(double value, boolean isValueX) {
 				if (!isValueX) {
-					return ""+(int) convertSpeed(value);
+					return ""+(int) value;
 				}
 				return null; // let graphview generate X-axis label for us
 			}

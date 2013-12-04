@@ -60,7 +60,6 @@ public class PositionsDataSource {
 		Log.w("SetRunName","id is: " + getLastID(runName));
 	}
 
-	//TODO delete this if I don't need it after refactoring. //set the run name prior to calling this method.
 	public void makeRun(){
 		if(!containsTable(run)) dbHelper.createTable(database,run);
 	}
